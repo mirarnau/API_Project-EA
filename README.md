@@ -1,2 +1,2 @@
 # API_Project-EA
-REST API for the EA project
+This is the project defining the REST API for our EA Project "myRoom".
