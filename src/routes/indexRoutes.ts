@@ -10,7 +10,7 @@ class IndexRoutes {
     }
 
     routes(){
-        this.router.get('/', (req, res) => res.status(200).send('API: /api/users'));
+        this.router.get('/', (req, res) => res.status(200).send('To access the API go to the following URL: /api/{}'));
     }
 }
 

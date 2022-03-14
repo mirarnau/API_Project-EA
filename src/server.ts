@@ -6,7 +6,8 @@ import compression from 'compression';
 import cors from 'cors';
 
 import indexRoutes from './routes/indexRoutes';
-import postsRoutes from './routes/usersRoutes';
+import customersRoutes from './routes/customersRoutes';
+import ownersRoutes from './routes/ownersRoutes';
 
 class Server {
     public app: express.Application;
@@ -20,7 +21,7 @@ class Server {
 
     config() {
         //MongoDB settings
-        const MONGO_URI = 'mongodb://localhost/tsapi';
+        const MONGO_URI = 'mongodb://localhost/EA-PROJECT';
         mongoose.connect(MONGO_URI || process.env.MONGODB_URL)
         .then(db => console.log("DB is connected"));
 
@@ -38,7 +39,8 @@ class Server {
 
     routes() {
         this.app.use(indexRoutes);
-        this.app.use('/api/users', postsRoutes);
+        this.app.use('/api/customers', customersRoutes);
+        this.app.use('/api/owners', ownersRoutes);
 
     }
 
