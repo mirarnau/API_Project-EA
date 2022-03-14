@@ -20,7 +20,7 @@ class OwnersRoutes {
     }
 
     public async getOwnerByName(req: Request, res: Response) : Promise<void> {
-        const ownerFound = await Owner.findOne({name: req.params.ownerName});
+        const ownerFound = await Owner.findOne({ownerName: req.params.ownerName});
         if(ownerFound == null){
             res.status(404).send("Owner not found.");
         }
@@ -30,7 +30,7 @@ class OwnersRoutes {
     }
 
     public async addOwner(req: Request, res: Response) : Promise<void> {
-        const ownerFound = await Owner.findOne({userName: req.body.ownerName})
+        const ownerFound = await Owner.findOne({ownerName: req.body.ownerName})
         if (ownerFound != null){
             res.status(409).send("This owner already exists.")
         }
@@ -43,7 +43,7 @@ class OwnersRoutes {
     }
 
     public async updateOwner(req: Request, res: Response) : Promise<void> {
-        const ownerToUpdate = await Owner.findOneAndUpdate ({name: req.params.ownerName}, req.body);
+        const ownerToUpdate = await Owner.findOneAndUpdate ({ownerName: req.params.ownerName}, req.body);
         if(ownerToUpdate == null){
             res.status(404).send("Owner not found.");
         }
@@ -53,7 +53,7 @@ class OwnersRoutes {
     }
 
     public async deleteOwner(req: Request, res: Response) : Promise<void> {
-        const ownerToDelete = await Owner.findOneAndDelete ({name:req.params.ownerName}, req.body);
+        const ownerToDelete = await Owner.findOneAndDelete ({ownerName:req.params.ownerName}, req.body);
         if (ownerToDelete == null){
             res.status(404).send("Owner not found.")
         }

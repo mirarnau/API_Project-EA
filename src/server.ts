@@ -8,6 +8,7 @@ import cors from 'cors';
 import indexRoutes from './routes/indexRoutes';
 import customersRoutes from './routes/customersRoutes';
 import ownersRoutes from './routes/ownersRoutes';
+import restaurantsRoutes from './routes/restaurantsRoutes';
 
 class Server {
     public app: express.Application;
@@ -39,8 +40,9 @@ class Server {
 
     routes() {
         this.app.use(indexRoutes);
-        this.app.use('/api/customers', customersRoutes);
-        this.app.use('/api/owners', ownersRoutes);
+        this.app.use('/api/customer', customersRoutes);
+        this.app.use('/api/owner', ownersRoutes);
+        this.app.use('/api/restaurant', restaurantsRoutes);
 
     }
 

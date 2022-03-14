@@ -20,7 +20,7 @@ class CustomerRoutes {
     }
 
     public async getCustomerByName(req: Request, res: Response) : Promise<void> {
-        const customerFound = await Customer.findOne({name: req.params.customerName});
+        const customerFound = await Customer.findOne({customerName: req.params.customerName});
         if(customerFound == null){
             res.status(404).send("Customer not found.");
         }
@@ -30,7 +30,7 @@ class CustomerRoutes {
     }
 
     public async addCustomer(req: Request, res: Response) : Promise<void> {
-        const customerFound = await Customer.findOne({userName: req.body.customerName})
+        const customerFound = await Customer.findOne({customerName: req.body.customerName})
         if (customerFound != null){
             res.status(409).send("This customer already exists.")
         }
@@ -43,7 +43,7 @@ class CustomerRoutes {
     }
 
     public async updateCustomer(req: Request, res: Response) : Promise<void> {
-        const customerToUpdate = await Customer.findOneAndUpdate ({name: req.params.customerName}, req.body);
+        const customerToUpdate = await Customer.findOneAndUpdate ({customerName: req.params.customerName}, req.body);
         if(customerToUpdate == null){
             res.status(404).send("Customer not found.");
         }
@@ -53,7 +53,7 @@ class CustomerRoutes {
     }
 
     public async deleteCustomer(req: Request, res: Response) : Promise<void> {
-        const customerToDelete = await Customer.findOneAndDelete ({name:req.params.customerName}, req.body);
+        const customerToDelete = await Customer.findOneAndDelete ({customerName:req.params.customerName}, req.body);
         if (customerToDelete == null){
             res.status(404).send("Customer not found.")
         }

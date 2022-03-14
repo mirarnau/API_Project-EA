@@ -8,6 +8,7 @@ const RestaurantSchema = new Schema({
     description: {type: String, required:true},
     photos:[],//List of URLs. The photos will be stored in the server.
     rating: {type: Number},
+    owner: {type:String, required:true},
     creationDate: {type: Date, default:Date.now},
     listTags:[{
         tagName:{type:String} 
