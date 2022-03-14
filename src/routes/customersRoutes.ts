@@ -28,7 +28,7 @@ class CustomerRoutes {
             res.status(200).send(customerFound);
         }
     }
-
+    
     public async addCustomer(req: Request, res: Response) : Promise<void> {
         const customerFound = await Customer.findOne({customerName: req.body.customerName})
         if (customerFound != null){
