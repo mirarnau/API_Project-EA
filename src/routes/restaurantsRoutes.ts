@@ -90,7 +90,7 @@ class RestaurantsRoutes {
         this.router.post('/', this.addRestaurant);
         this.router.put('/:restaurantName', this.updateRestaurant);
         this.router.delete('/:restaurantName', this.deleteRestaurant);
-        this.router.get('/filters', this.getRestaurantsByTags);
+        this.router.get('/filters/get', this.getRestaurantsByTags);
     }
 }
 const restaurantsRoutes = new RestaurantsRoutes();
