@@ -1,4 +1,5 @@
 import {Request, response, Response, Router} from 'express';
+import { request } from 'http';
 
 import Owner from '../models/Owner';
 
@@ -61,7 +62,6 @@ class OwnersRoutes {
             res.status(200).send('Owner deleted.');
         }
     } 
-    
     routes() {
         this.router.get('/', this.getAllOwners);
         this.router.get('/:ownerName', this.getOwnerByName);

@@ -35,8 +35,8 @@ class RestaurantsRoutes {
             res.status(409).send("This restaurant already exists.")
         }
         else{
-            const {id, restaurantName, email, address, description, owner, listTags} = req.body;
-            const newRestaurant = new Restaurant({id, restaurantName, email, address, description, owner, listTags});
+            const {id, idOwner, restaurantName, email, address, description, owner, listTags} = req.body;
+            const newRestaurant = new Restaurant({id, idOwner, restaurantName, email, address, description, owner, listTags});
             await newRestaurant.save();
             res.status(201).send('Restaurant added.');
         }
@@ -62,12 +62,35 @@ class RestaurantsRoutes {
         }
     } 
     
+    public async getRestaurantsByTags(req:Request, res: Response) : Promise<void> {
+        const listTastesCustomer = req.body.tags;
+        console.log(listTastesCustomer);
+        if (listTastesCustomer.length == 0){
+            res.status(409).send("No tags specidfied in the petition.")
+        }
+        else{
+            const listTags = listTastesCustomer.map(taste => taste.tagName);
+            const allRestaurants = await Restaurant.find();
+            const filteredRestaurants = allRestaurants.filter((restaurant) => {
+                for (let i = 0; i < listTags.length; i++){
+                    if (restaurant.listTags.contains(listTags[i])){
+                        return restaurant;
+                    }
+                }
+            })
+            res.status(200).send(filteredRestaurants);
+            if (filteredRestaurants.length == 0){
+                res.status(404).send("Any restaurant fulfills this tags.")
+            }
+        }
+    }    
     routes() {
         this.router.get('/', this.getAllRestaurants);
         this.router.get('/:restaurantName', this.getRestaurantByName);
         this.router.post('/', this.addRestaurant);
         this.router.put('/:restaurantName', this.updateRestaurant);
         this.router.delete('/:restaurantName', this.deleteRestaurant);
+        this.router.get('/filters', this.getRestaurantsByTags);
     }
 }
 const restaurantsRoutes = new RestaurantsRoutes();

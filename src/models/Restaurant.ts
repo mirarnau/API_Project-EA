@@ -14,13 +14,7 @@ const RestaurantSchema = new Schema({
     listTags:[{
         tagName:{type:String} 
     }],
-    menu:[{  //Each entry is a dish.
-        name:{type:String},
-        type:{type:String}, //Appetizer, main, dessert, etc.
-        description:{type:String},
-        price:{type:Number},
-        rating:{type:Number}
-    }]
+    listMenus:[] //Array containing the IDs of the menus.
 })
 
 export default model('Restaurant', RestaurantSchema);
