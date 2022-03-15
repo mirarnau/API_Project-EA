@@ -2,6 +2,7 @@ import {Schema, model} from 'mongoose';
 
 const RestaurantSchema = new Schema({
     id: {type: Number, required:true, unique:true},
+    idOwner:{type:String, required:true},
     restaurantName: {type: String, required:true, unique:true},
     email: {type: String, required:true},
     address: {type: String, required:true},
