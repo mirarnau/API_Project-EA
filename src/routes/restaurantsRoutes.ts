@@ -69,23 +69,26 @@ class RestaurantsRoutes {
         }
         else {
             const tagsList = listTastesCustomer.map(taste => taste.tagName);
-            console.log(tagsList);
             const allRestaurants = await (await Restaurant.find());
             const filteredResutaurants = allRestaurants.filter((restaurant) => {
                 console.log(restaurant);
-                for (let i = 0; i < tagsList.length; i++){
+                for (let i = 0; i < tagsList.length; i++) {
                     const tagsRestaurant = restaurant.listTags.map((tag) => tag.tagName);
+                    console.log(tagsList[i]);
                     console.log(tagsRestaurant);
-                    if (tagsRestaurant.includes(tagsList[i])){
-                        return restaurant;
+                    let tagsMatches = 0;
+                    if (tagsRestaurant.includes(tagsList[i])) {
+                        tagsMatches++;
+                        if (tagsMatches == tagsList.length){
+                            return restaurant;
+                        }
                     }
-
                 }
-            })
-            if (filteredResutaurants.length == 0){
-                res.status(404).send("Any restaurant fulfills the requirements.")
+            });
+            if (filteredResutaurants.length == 0) {
+                res.status(404).send("Any restaurant fulfills the requirements.");
             }
-            else{
+            else {
                 res.status(200).send(filteredResutaurants);
             }
         }
