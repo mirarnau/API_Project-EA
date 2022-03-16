@@ -1,6 +1,7 @@
 import {Request, response, Response, Router} from 'express';
 
 import Restaurant from '../models/Restaurant';
+import Reservation from '../models/Reservation';
 
 class RestaurantsRoutes {
     public router: Router;

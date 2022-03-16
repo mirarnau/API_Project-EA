@@ -15,7 +15,8 @@ const CustomerSchema = new Schema({
         nameRestaurant:{type:String},
         amount:{type:Number},
         expirationDate:{type:String}
-    }]
+    }],
+    listReservations:[] //Array containing the IDs of the reservations of the customer.
 })
 
 export default model('Customer', CustomerSchema);
