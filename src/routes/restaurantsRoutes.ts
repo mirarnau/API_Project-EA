@@ -73,11 +73,11 @@ class RestaurantsRoutes {
             const allRestaurants = await (await Restaurant.find());
             const filteredResutaurants = allRestaurants.filter((restaurant) => {
                 console.log(restaurant);
+                let tagsMatches = 0;
                 for (let i = 0; i < tagsList.length; i++) {
                     const tagsRestaurant = restaurant.listTags.map((tag) => tag.tagName);
                     console.log(tagsList[i]);
                     console.log(tagsRestaurant);
-                    let tagsMatches = 0;
                     if (tagsRestaurant.includes(tagsList[i])) {
                         tagsMatches++;
                         if (tagsMatches == tagsList.length){
