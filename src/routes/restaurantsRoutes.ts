@@ -18,7 +18,6 @@ class RestaurantsRoutes {
             res.status(200).send(allRestaurants);
         }
     }
-
     public async getRestaurantByName(req: Request, res: Response) : Promise<void> {
         const restaurantFound = await Restaurant.findOne({restaurantName: req.params.restaurantName});
         if(restaurantFound == null){
@@ -65,25 +64,33 @@ class RestaurantsRoutes {
     public async getRestaurantsByTags(req:Request, res: Response) : Promise<void> {
         const listTastesCustomer = req.body.tags;
         console.log(listTastesCustomer);
-        if (listTastesCustomer.length == 0){
-            res.status(409).send("No tags specidfied in the petition.")
+        if (listTastesCustomer.length == 0) {
+            res.status(409).send("No tags specidfied in the petition.");
         }
-        else{
-            const listTags = listTastesCustomer.map(taste => taste.tagName);
-            const allRestaurants = await Restaurant.find();
-            const filteredRestaurants = allRestaurants.filter((restaurant) => {
-                for (let i = 0; i < listTags.length; i++){
-                    if (restaurant.listTags.contains(listTags[i])){
+        else {
+            const tagsList = listTastesCustomer.map(taste => taste.tagName);
+            console.log(tagsList);
+            const allRestaurants = await (await Restaurant.find());
+            const filteredResutaurants = allRestaurants.filter((restaurant) => {
+                console.log(restaurant);
+                for (let i = 0; i < tagsList.length; i++){
+                    const tagsRestaurant = restaurant.listTags.map((tag) => tag.tagName);
+                    console.log(tagsRestaurant);
+                    if (tagsRestaurant.includes(tagsList[i])){
                         return restaurant;
                     }
+
                 }
             })
-            res.status(200).send(filteredRestaurants);
-            if (filteredRestaurants.length == 0){
-                res.status(404).send("Any restaurant fulfills this tags.")
+            if (filteredResutaurants.length == 0){
+                res.status(404).send("Any restaurant fulfills the requirements.")
+            }
+            else{
+                res.status(200).send(filteredResutaurants);
             }
         }
     }    
+    
     routes() {
         this.router.get('/', this.getAllRestaurants);
         this.router.get('/:restaurantName', this.getRestaurantByName);
