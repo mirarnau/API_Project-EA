@@ -1,15 +1,14 @@
+import mongoose from 'mongoose';
 import {Schema, model} from 'mongoose';
 
 const RestaurantSchema = new Schema({
-    id: {type: Number, required:true, unique:true},
-    idOwner:{type:String, required:true},
+    owner: {type: mongoose.Schema.Types.ObjectId, ref:"Owner"},  //The _id of the owner.
     restaurantName: {type: String, required:true, unique:true},
     email: {type: String, required:true},
     address: {type: String, required:true},
     description: {type: String, required:true},
     photos:[],//List of URLs. The photos will be stored in the server.
     rating: {type: Number},
-    owner: {type:String, required:true},
     creationDate: {type: Date, default:Date.now},
     listTags:[{
         tagName:{type:String} 

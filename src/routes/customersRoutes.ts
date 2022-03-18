@@ -19,6 +19,16 @@ class CustomerRoutes {
         }
     }
 
+    public async getCustomerById(req: Request, res: Response) : Promise<void> {
+        const customerFound = await Customer.findById(req.params._id);
+        if(customerFound == null){
+            res.status(404).send("Customer not found.");
+        }
+        else{
+            res.status(200).send(customerFound);
+        }
+    }
+
     public async getCustomerByName(req: Request, res: Response) : Promise<void> {
         const customerFound = await Customer.findOne({customerName: req.params.customerName});
         if(customerFound == null){
@@ -35,8 +45,8 @@ class CustomerRoutes {
             res.status(409).send("This customer already exists.")
         }
         else{
-            const {id, customerName, fullName, email, password} = req.body;
-            const newCustomer = new Customer({id, customerName, fullName, email, password});
+            const {customerName, fullName, email, password} = req.body;
+            const newCustomer = new Customer({customerName, fullName, email, password});
             await newCustomer.save();
             res.status(201).send('Customer added.');
         }
@@ -53,7 +63,7 @@ class CustomerRoutes {
     }
 
     public async deleteCustomer(req: Request, res: Response) : Promise<void> {
-        const customerToDelete = await Customer.findOneAndDelete ({customerName:req.params.customerName}, req.body);
+        const customerToDelete = await Customer.findByIdAndDelete (req.params._id);
         if (customerToDelete == null){
             res.status(404).send("Customer not found.")
         }
@@ -64,10 +74,11 @@ class CustomerRoutes {
     
     routes() {
         this.router.get('/', this.getAllCustomers);
-        this.router.get('/:customerName', this.getCustomerByName);
+        this.router.get('/:_id', this.getCustomerById);
+        this.router.get('/name/:customerName', this.getCustomerByName);
         this.router.post('/', this.addCustomer);
         this.router.put('/:customerName', this.updateCustomer);
-        this.router.delete('/:customerName', this.deleteCustomer);
+        this.router.delete('/:_id', this.deleteCustomer);
     }
 }
 const customersRoutes = new CustomerRoutes();

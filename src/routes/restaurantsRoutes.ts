@@ -29,14 +29,23 @@ class RestaurantsRoutes {
         }
     }
 
+    public async getRestaurantById(req: Request, res: Response) : Promise<void> {
+        const restaurantFound = await Restaurant.findById(req.params._id).populate('owner');
+        if(restaurantFound == null){
+            res.status(404).send("Restaurant not found.");
+        }
+        else{
+            res.status(200).send(restaurantFound);
+        }
+    }
     public async addRestaurant(req: Request, res: Response) : Promise<void> {
         const restaurantFound = await Restaurant.findOne({restaurantName: req.body.restaurantName})
         if (restaurantFound != null){
             res.status(409).send("This restaurant already exists.")
         }
         else{
-            const {id, idOwner, restaurantName, email, address, description, owner, listTags} = req.body;
-            const newRestaurant = new Restaurant({id, idOwner, restaurantName, email, address, description, owner, listTags});
+            const {owner, restaurantName, email, address, description, listTags} = req.body;
+            const newRestaurant = new Restaurant({owner, restaurantName, email, address, description, listTags});
             await newRestaurant.save();
             res.status(201).send('Restaurant added.');
         }
@@ -53,7 +62,7 @@ class RestaurantsRoutes {
     }
 
     public async deleteRestaurant(req: Request, res: Response) : Promise<void> {
-        const restaurantToDelete = await Restaurant.findOneAndDelete ({restaurantName:req.params.restaurantName}, req.body);
+        const restaurantToDelete = await Restaurant.findByIdAndDelete (req.params._id);
         if (restaurantToDelete == null){
             res.status(404).send("Restaurant not found.")
         }
@@ -62,9 +71,8 @@ class RestaurantsRoutes {
         }
     } 
     
-    public async getRestaurantsByTags(req:Request, res: Response) : Promise<void> {
+    public async filterRestaurants (req:Request, res: Response) : Promise<void> {
         const listTastesCustomer = req.body.tags;
-        console.log(listTastesCustomer);
         if (listTastesCustomer.length == 0) {
             res.status(409).send("No tags specidfied in the petition.");
         }
@@ -72,7 +80,6 @@ class RestaurantsRoutes {
             const tagsList = listTastesCustomer.map(taste => taste.tagName);
             const allRestaurants = await (await Restaurant.find());
             const filteredResutaurants = allRestaurants.filter((restaurant) => {
-                console.log(restaurant);
                 let tagsMatches = 0;
                 for (let i = 0; i < tagsList.length; i++) {
                     const tagsRestaurant = restaurant.listTags.map((tag) => tag.tagName);
@@ -97,13 +104,15 @@ class RestaurantsRoutes {
     
     routes() {
         this.router.get('/', this.getAllRestaurants);
+        this.router.get('/:_id', this.getRestaurantById);
         this.router.get('/:restaurantName', this.getRestaurantByName);
         this.router.post('/', this.addRestaurant);
         this.router.put('/:restaurantName', this.updateRestaurant);
-        this.router.delete('/:restaurantName', this.deleteRestaurant);
-        this.router.get('/filters/get', this.getRestaurantsByTags);
+        this.router.delete('/:_id', this.deleteRestaurant);
+        this.router.get('/filters/get', this.filterRestaurants);
     }
 }
 const restaurantsRoutes = new RestaurantsRoutes();
 
 export default restaurantsRoutes.router;
+

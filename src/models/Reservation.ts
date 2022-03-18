@@ -1,9 +1,9 @@
+import mongoose from 'mongoose';
 import {Schema, model} from 'mongoose';
 
 const ReservationSchema = new Schema({
-    id: {type: Number, required:true, unique:true},
-    idCustomer: {type:String, required:true},
-    idRestaurant: {type:String, required:true},
+    _idCustomer: {type: mongoose.Schema.Types.ObjectId, ref:"Customer"},
+    _idRestaurant: {type: mongoose.Schema.Types.ObjectId, ref:"Restaurant"},
     dateReservation: {type:String, required:true},
     timeReservation: {type:String, required:true},
     creationDate: {type: Date, default:Date.now}
