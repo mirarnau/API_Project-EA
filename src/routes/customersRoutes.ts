@@ -53,13 +53,59 @@ class CustomerRoutes {
     }
 
     public async updateCustomer(req: Request, res: Response) : Promise<void> {
-        const customerToUpdate = await Customer.findOneAndUpdate ({customerName: req.params.customerName}, req.body);
+        const customerToUpdate = await Customer.findByIdAndUpdate (req.params._id, req.body);
         if(customerToUpdate == null){
             res.status(404).send("Customer not found.");
         }
         else{
-            res.status(201).send('Customer updated.');
+            res.status(201).send("Customer updated.");
         }
+    }
+
+
+    public async addTaste(req: Request, res: Response) : Promise<any> {
+        const customer = await Customer.findById(req.params._id);
+        let listTastesCustomer = customer.listTastes;
+        if (customer == null){
+            res.status(404).send("Customer not found.");
+        }
+        else{
+            const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
+            const listTagsAdd = req.body.listTastes.map(tagName => tagName.tagName);
+            for (let i = 0; i<listTagsAdd.length; i++){
+                if (listTagsCustomer.includes(listTagsAdd[i])){
+                    return res.status(409).send("Taste already exists.");
+                }
+                else{
+                    listTastesCustomer.push(req.body.listTastes[i]);
+                }
+            }
+            await customer.updateOne({listTastes: listTastesCustomer});
+            res.status(200).send("Tastes updated."); 
+        }
+    }
+
+    public async removeTaste(req: Request, res: Response) : Promise<any> {
+        const customer = await Customer.findById(req.params._id);
+        let listTastesCustomer = customer.listTastes;
+        if (customer == null){
+            res.status(404).send("Customer not found.");
+        }
+        else{
+            const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
+            const listTagsRm = req.body.listTastes.map(tagName => tagName.tagName);
+            for (let i = 0; i<listTagsRm.length; i++){
+                const index = listTagsCustomer.indexOf(listTagsRm[i]);
+                if (index == -1){
+                    return res.status(409).send("The user might not have some of these tastes yet.");
+                }
+                else{
+                    listTastesCustomer.splice(index,1);
+                }
+            }
+        }   
+        await customer.updateOne({listTastes: listTastesCustomer});
+        return res.status(200).send("Taste deleted.")
     }
 
     public async deleteCustomer(req: Request, res: Response) : Promise<void> {
@@ -71,13 +117,15 @@ class CustomerRoutes {
             res.status(200).send('Customer deleted.');
         }
     } 
-    
+
     routes() {
         this.router.get('/', this.getAllCustomers);
         this.router.get('/:_id', this.getCustomerById);
         this.router.get('/name/:customerName', this.getCustomerByName);
         this.router.post('/', this.addCustomer);
-        this.router.put('/:customerName', this.updateCustomer);
+        this.router.put('/:_id', this.updateCustomer);
+        this.router.put('/tastes/add/:_id', this.addTaste);
+        this.router.put('/tastes/remove/:_id', this.removeTaste);
         this.router.delete('/:_id', this.deleteCustomer);
     }
 }
