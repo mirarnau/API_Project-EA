@@ -1,7 +1,6 @@
 import {Schema, model} from 'mongoose';
 
 const CustomerSchema = new Schema({
-    id: {type: Number, required:true, unique:true},
     customerName: {type: String, required:true, unique:true},
     fullName: {type: String, required:true},
     email: {type: String, required:true},
@@ -15,7 +14,8 @@ const CustomerSchema = new Schema({
         nameRestaurant:{type:String},
         amount:{type:Number},
         expirationDate:{type:String}
-    }]
+    }],
+    listReservations:[] //Array containing the IDs of the reservations of the customer.
 })
 
 export default model('Customer', CustomerSchema);
