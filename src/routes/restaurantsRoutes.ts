@@ -105,7 +105,7 @@ class RestaurantsRoutes {
     routes() {
         this.router.get('/', this.getAllRestaurants);
         this.router.get('/:_id', this.getRestaurantById);
-        this.router.get('/:restaurantName', this.getRestaurantByName);
+        this.router.get('/name/:restaurantName', this.getRestaurantByName);
         this.router.post('/', this.addRestaurant);
         this.router.put('/:restaurantName', this.updateRestaurant);
         this.router.delete('/:_id', this.deleteRestaurant);
