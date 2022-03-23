@@ -20,7 +20,7 @@ class MenuRoutes {
     }
 
     public async getMenuById(req: Request, res: Response) : Promise<void> {
-        const menuFound = await Menu.findById(req.params._id).populate('owner');
+        const menuFound = await Menu.findById(req.params._id).populate('restaurant');
         if(menuFound == null){
             res.status(404).send("Menu not found.");
         }
@@ -30,8 +30,8 @@ class MenuRoutes {
     }
     
     public async addMenu(req: Request, res: Response) : Promise<void> {
-        const {owner, title, type, description, price} = req.body;
-        const newMenu = new Menu({owner, title, type, description, price});
+        const {restaurant, title, type, description, price} = req.body;
+        const newMenu = new Menu({restaurant, title, type, description, price});
         await newMenu.save();
         res.status(201).send('Menu added.');
         
