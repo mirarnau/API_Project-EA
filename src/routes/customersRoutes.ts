@@ -66,23 +66,25 @@ class CustomerRoutes {
     public async addTaste(req: Request, res: Response) : Promise<any> {
         const customer = await Customer.findById(req.params._id);
         let listTastesCustomer = customer.listTastes;
+        let listTastesAdd = req.body;
         if (customer == null){
             res.status(404).send("Customer not found.");
+            return;
         }
-        else{
-            const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
-            const listTagsAdd = req.body.listTastes.map(tagName => tagName.tagName);
-            for (let i = 0; i<listTagsAdd.length; i++){
-                if (listTagsCustomer.includes(listTagsAdd[i])){
-                    return res.status(409).send("Taste already exists.");
-                }
-                else{
-                    listTastesCustomer.push(req.body.listTastes[i]);
-                }
+        //Customer.findByIdAndUpdate({_id: req.params._id}, {$push: {listTastes: listTastesAdd}})
+        const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
+        const listTagsAdd = req.body.listTastes.map(tagName => tagName.tagName);
+        for (let i = 0; i<listTagsAdd.length; i++){
+            if (listTagsCustomer.includes(listTagsAdd[i])){
+                return res.status(409).send("Taste already exists.");
             }
-            await customer.updateOne({listTastes: listTastesCustomer});
-            res.status(200).send("Tastes updated."); 
+            else{
+                listTastesCustomer.push(req.body.listTastes[i]);
+            }
         }
+        await customer.updateOne({listTastes: listTastesCustomer});
+        res.status(200).send("Tastes updated."); 
+        
     }
 
     public async removeTaste(req: Request, res: Response) : Promise<any> {

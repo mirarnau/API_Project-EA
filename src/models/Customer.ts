@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import {Schema, model} from 'mongoose';
 
 const CustomerSchema = new Schema({
@@ -15,7 +16,7 @@ const CustomerSchema = new Schema({
         amount:{type:Number},
         expirationDate:{type:String}
     }],
-    listReservations:[] //Array containing the IDs of the reservations of the customer.
+    listReservations: [{type:mongoose.Schema.Types.ObjectId, ref:"Reservation"}] //Array containing the IDs of the reservations of the customer.
 })
 
 export default model('Customer', CustomerSchema);
