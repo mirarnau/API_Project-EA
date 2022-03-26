@@ -89,23 +89,23 @@ class CustomerRoutes {
 
     public async removeTaste(req: Request, res: Response) : Promise<any> {
         const customer = await Customer.findById(req.params._id);
-        let listTastesCustomer = customer.listTastes;
         if (customer == null){
             res.status(404).send("Customer not found.");
+            return;
         }
-        else{
-            const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
-            const listTagsRm = req.body.listTastes.map(tagName => tagName.tagName);
-            for (let i = 0; i<listTagsRm.length; i++){
-                const index = listTagsCustomer.indexOf(listTagsRm[i]);
-                if (index == -1){
-                    return res.status(409).send("The user might not have some of these tastes yet.");
-                }
-                else{
-                    listTastesCustomer.splice(index,1);
-                }
+        let listTastesCustomer = customer.listTastes;
+        const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
+        const listTagsRm = req.body.listTastes.map(tagName => tagName.tagName);
+        for (let i = 0; i<listTagsRm.length; i++){
+            const index = listTagsCustomer.indexOf(listTagsRm[i]);
+            if (index == -1){
+                return res.status(409).send("The user might not have some of these tastes yet.");
             }
-        }   
+            else{
+                listTastesCustomer.splice(index,1);
+            }
+        }
+          
         await customer.updateOne({listTastes: listTastesCustomer});
         return res.status(200).send("Taste deleted.")
     }
