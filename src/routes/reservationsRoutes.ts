@@ -52,7 +52,6 @@ class ReservationsRoutes {
         }
         let listReservationsCustomer: mongoose.Types.ObjectId [];
         listReservationsCustomer  = customer.listReservations;
-        let listReservationsUpdated: mongoose.Types.ObjectId [];
         let newReservationID: mongoose.Types.ObjectId;
         await newReservation.save().then(reservation => {
             newReservationID = reservation._id.toString();

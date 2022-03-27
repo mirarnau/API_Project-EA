@@ -2,6 +2,7 @@ import {Request, response, Response, Router} from 'express';
 
 import Restaurant from '../models/Restaurant';
 import Reservation from '../models/Reservation';
+import Owner from '../models/Owner';
 
 class RestaurantsRoutes {
     public router: Router;
@@ -42,14 +43,23 @@ class RestaurantsRoutes {
     public async addRestaurant(req: Request, res: Response) : Promise<void> {
         const restaurantFound = await Restaurant.findOne({restaurantName: req.body.restaurantName})
         if (restaurantFound != null){
-            res.status(409).send("This restaurant already exists.")
+            res.status(409).send("This restaurant already exists.");
+            return;
         }
-        else{
-            const {owner, restaurantName, email, address, description, listTags} = req.body;
-            const newRestaurant = new Restaurant({owner, restaurantName, email, address, description, listTags});
-            await newRestaurant.save();
-            res.status(201).send('Restaurant added.');
+        const ownerFound = await Owner.findById({_id: req.body.owner});
+        if (ownerFound == null){
+            res.status(404).send("Onwer not found.");
+            return;
         }
+        const {owner, restaurantName, email, address, description, listTags} = req.body;
+        const newRestaurant = new Restaurant({owner, restaurantName, email, address, description, listTags});
+        let newRestaurantID;
+        await newRestaurant.save().then(restaurant => {
+            newRestaurantID = restaurant._id.toString();
+        });
+        await Owner.findByIdAndUpdate({_id: req.body.owner}, {$push: {listRestaurants: newRestaurantID}})
+        res.status(201).send('Restaurant added and owner updated.');
+    
     }
 
     public async updateRestaurant(req: Request, res: Response) : Promise<void> {
