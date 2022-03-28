@@ -109,7 +109,6 @@ class ReservationsRoutes {
         let listReservationsCustomer = customer.listReservations;
         for (let i = 0; i<listReservationsCustomer.length; i++){
             if (listReservationsCustomer[i].toString() == reservationToDelete._id.toString()){
-                console.log("AAAAAAAAAAA")
                 listReservationsCustomer.splice(i, 1);
             }
         }

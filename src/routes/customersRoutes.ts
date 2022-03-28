@@ -1,6 +1,7 @@
 import {Request, response, Response, Router} from 'express';
 
 import Customer from '../models/Customer';
+import Restaurant from '../models/Restaurant';
 
 class CustomerRoutes {
     public router: Router;
@@ -20,7 +21,7 @@ class CustomerRoutes {
     }
 
     public async getCustomerById(req: Request, res: Response) : Promise<void> {
-        const customerFound = await Customer.findById(req.params._id).populate("listReservations listReservations._idRestaurant");
+        const customerFound = await Customer.findById(req.params._id).populate("listReservations");
         if(customerFound == null){
             res.status(404).send("Customer not found.");
         }
@@ -62,11 +63,57 @@ class CustomerRoutes {
         }
     }
 
+    public async addDiscount(req: Request, res: Response) : Promise<any> {
+        const customer = await Customer.findById(req.params._id);
+        const restaurant = await Restaurant.find({restaurantName: req.body.nameRestaurant});
+        if (customer == null){
+            res.status(404).send("Customer not found.");
+            return;
+        }
+        if (restaurant == null){
+            res.status(404).send("Restaurant not found.");
+            return;
+        }
+
+        await Customer.findByIdAndUpdate({_id: req.params._id}, {$push: {listDiscounts : req.body}});
+
+        res.status(200).send("Discounts updated."); 
+        
+    }
+
+    public async removeDiscount(req: Request, res: Response) : Promise<any> {
+        const customer = await Customer.findById(req.params._id);
+        const restaurant = await Restaurant.find({restaurantName: req.body.nameRestaurant});
+        if (customer == null){
+            res.status(404).send("Customer not found.");
+            return;
+        }
+        if (restaurant == null){
+            res.status(404).send("Restaurant not found.");
+            return;
+        }
+        let listDiscountsCustomer = customer.listDiscounts;
+        let found = 0;
+        for (let i = 0; i < listDiscountsCustomer.length; i++){
+            if ((listDiscountsCustomer[i].nameRestaurant == req.body.nameRestaurant) 
+            && (listDiscountsCustomer[i].amount == req.body.amount)
+            && (listDiscountsCustomer[i].timeReservation == req.body.timeReservation)){
+                listDiscountsCustomer.splice(i, 1);
+                found = 1;
+            }
+        }
+        if (found == 0){
+            res.status(404).send("The customer does not have this discount.")
+            return;
+        }
+        await Customer.findByIdAndUpdate(req.params._id, {listDiscounts: listDiscountsCustomer});
+        res.status(200).send("Discount removed.")
+    }
+
 
     public async addTaste(req: Request, res: Response) : Promise<any> {
         const customer = await Customer.findById(req.params._id);
         let listTastesCustomer = customer.listTastes;
-        let listTastesAdd = req.body;
         if (customer == null){
             res.status(404).send("Customer not found.");
             return;
@@ -126,6 +173,8 @@ class CustomerRoutes {
         this.router.get('/name/:customerName', this.getCustomerByName);
         this.router.post('/', this.addCustomer);
         this.router.put('/:_id', this.updateCustomer);
+        this.router.put('/discounts/add/:_id', this.addDiscount);
+        this.router.put('/discounts/remove/:_id', this.removeDiscount);
         this.router.put('/tastes/add/:_id', this.addTaste);
         this.router.put('/tastes/remove/:_id', this.removeTaste);
         this.router.delete('/:_id', this.deleteCustomer);
