@@ -62,6 +62,49 @@ class CustomerRoutes {
         }
     }
 
+    public async addDiscount(req: Request, res: Response) : Promise<any> {
+        const customer = await Customer.findById(req.params._id);
+        let listDiscountsCustomer = customer.listDiscounts;
+        let listDiscountsAdd = req.body;
+        if (customer == null){
+            res.status(404).send("Customer not found.");
+            return;
+        }
+        const listDiscIdCustomer = listDiscountsCustomer.map(disc => disc._id);
+        const listDiscIdAdd = req.body.listDiscounts.map(id => id._id);
+        for (let i = 0; i<listDiscIdAdd.length; i++){
+            if (listDiscIdCustomer.includes(listDiscIdAdd[i])){
+                return res.status(409).send("Discount already exists.");
+            }
+            else{
+                listDiscountsCustomer.push(req.body.listDiscounts[i]);
+            }
+        }
+        await customer.updateOne({listDiscounts: listDiscountsCustomer});
+        res.status(200).send("Discounts updated."); 
+        
+    }
+
+    public async removeDiscount(req: Request, res: Response) : Promise<any> {
+        const customer = await Customer.findById(req.params._id);
+        if (customer == null){
+            res.status(404).send("Customer not found.");
+            return;
+        }
+        let listDiscountsCustomer = customer.listDiscounts;
+        const listDiscIdCustomer = listDiscountsCustomer.map(disc => disc._id);
+        const listDiscIdRm = req.body.listTastes.map(id => id._id);
+        for (let i = 0; i<listDiscIdRm.length; i++){
+            const index = listDiscIdCustomer.indexOf(listDiscIdRm[i]);
+            if (index == -1){
+                return res.status(409).send("The user might not have some of these discounts yet.");
+            }
+            else{
+                listDiscountsCustomer.splice(index,1);
+            }
+        }
+    }
+
 
     public async addTaste(req: Request, res: Response) : Promise<any> {
         const customer = await Customer.findById(req.params._id);
@@ -126,6 +169,8 @@ class CustomerRoutes {
         this.router.get('/name/:customerName', this.getCustomerByName);
         this.router.post('/', this.addCustomer);
         this.router.put('/:_id', this.updateCustomer);
+        this.router.put('/discounts/add/:_id', this.addDiscount);
+        this.router.put('/discounts/remove/:_id', this.removeTaste);
         this.router.put('/tastes/add/:_id', this.addTaste);
         this.router.put('/tastes/remove/:_id', this.removeTaste);
         this.router.delete('/:_id', this.deleteCustomer);
