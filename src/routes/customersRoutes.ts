@@ -20,7 +20,7 @@ class CustomerRoutes {
     }
 
     public async getCustomerById(req: Request, res: Response) : Promise<void> {
-        const customerFound = await Customer.findById(req.params._id).populate("listReservations");
+        const customerFound = await Customer.findById(req.params._id).populate("listReservations listReservations._idRestaurant");
         if(customerFound == null){
             res.status(404).send("Customer not found.");
         }
