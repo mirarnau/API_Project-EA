@@ -74,9 +74,21 @@ class CustomerRoutes {
             res.status(404).send("Restaurant not found.");
             return;
         }
-
-        await Customer.findByIdAndUpdate({_id: req.params._id}, {$push: {listDiscounts : req.body}});
-
+        let discountsBody = req.body.listDiscounts;
+        for (let i = 0; i < discountsBody.length; i++){
+            let found = 0;
+            const discount = discountsBody[i];
+            for (let u = 0; u < customer.listDiscounts.length; u++){
+                if ((customer.listDiscounts[u].nameRestaurant == discount.nameRestaurant) 
+                && (customer.listDiscounts[u].amount == discount.amount)
+                && (customer.listDiscounts[u].expirationDate == discount.expirationDate)){
+                    found = 1;
+                }
+            }
+            if (found == 0){
+                await Customer.findByIdAndUpdate({_id: req.params._id}, {$push: {listDiscounts : discount}});
+            }
+        }
         res.status(200).send("Discounts updated."); 
         
     }
