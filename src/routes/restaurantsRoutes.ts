@@ -38,6 +38,7 @@ class RestaurantsRoutes {
             res.status(200).send(restaurantFound);
         }
     }
+    
     public async addRestaurant(req: Request, res: Response) : Promise<void> {
         const restaurantFound = await Restaurant.findOne({restaurantName: req.body.restaurantName})
         if (restaurantFound != null){
@@ -52,7 +53,7 @@ class RestaurantsRoutes {
     }
 
     public async updateRestaurant(req: Request, res: Response) : Promise<void> {
-        const customerToUpdate = await Restaurant.findOneAndUpdate ({restaurantName: req.params.restaurantName}, req.body);
+        const customerToUpdate = await Restaurant.findByIdAndUpdate (req.params._id, req.body);
         if(customerToUpdate == null){
             res.status(404).send("Restaurant not found.");
         }
@@ -78,7 +79,7 @@ class RestaurantsRoutes {
         }
         else {
             const tagsList = listTastesCustomer.map(taste => taste.tagName);
-            const allRestaurants = await (await Restaurant.find());
+            const allRestaurants = await (Restaurant.find());
             const filteredResutaurants = allRestaurants.filter((restaurant) => {
                 let tagsMatches = 0;
                 for (let i = 0; i < tagsList.length; i++) {
@@ -101,15 +102,37 @@ class RestaurantsRoutes {
             }
         }
     }    
+
+    public async sortByRating (req: Request, res: Response) : Promise<void> {
+        const allRestaurants = await Restaurant.find();
+        if (allRestaurants == null){
+            res.status(404).send("There are no restaurants yet.")
+        }
+        else{
+            const sortedRestaurants = allRestaurants.sort((n1, n2) => {
+                if (n1.rating > n2.rating) {
+                    return -1
+                }
+                if (n1.rating < n2.rating){
+                    return 1
+                }
+                return 0;
+            });
+            res.status(200).send(sortedRestaurants);
+        }
+    }
+    
     
     routes() {
         this.router.get('/', this.getAllRestaurants);
         this.router.get('/:_id', this.getRestaurantById);
-        this.router.get('/:restaurantName', this.getRestaurantByName);
+        this.router.get('/name/:restaurantName', this.getRestaurantByName);
+        this.router.get('/filters/tags', this.filterRestaurants);
+        this.router.get('/filters/rating', this.sortByRating)
         this.router.post('/', this.addRestaurant);
-        this.router.put('/:restaurantName', this.updateRestaurant);
+        this.router.put('/:_id', this.updateRestaurant);
         this.router.delete('/:_id', this.deleteRestaurant);
-        this.router.get('/filters/get', this.filterRestaurants);
+        
     }
 }
 const restaurantsRoutes = new RestaurantsRoutes();

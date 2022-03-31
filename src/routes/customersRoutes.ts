@@ -1,6 +1,9 @@
 import {Request, response, Response, Router} from 'express';
-
+import {authJwt} from '../middlewares/index';
 import Customer from '../models/Customer';
+import bcrypt, { hash } from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config from '../config';
 
 class CustomerRoutes {
     public router: Router;
@@ -46,9 +49,14 @@ class CustomerRoutes {
         }
         else{
             const {customerName, fullName, email, password} = req.body;
-            const newCustomer = new Customer({customerName, fullName, email, password});
-            await newCustomer.save();
-            res.status(201).send('Customer added.');
+            const salt = await bcrypt.genSalt(10);
+            const hashed = await bcrypt.hash(password, salt);
+            const newCustomer = new Customer({customerName, fullName, email, password: hashed});
+            const savedUser = await newCustomer.save();
+            const token = jwt.sign({id: newCustomer._id, customerName: savedUser.customerName}, config.SECRET,{
+            expiresIn: 3600 //seconds
+            });
+            res.status(200).json({token});
         }
     }
 
@@ -66,44 +74,46 @@ class CustomerRoutes {
     public async addTaste(req: Request, res: Response) : Promise<any> {
         const customer = await Customer.findById(req.params._id);
         let listTastesCustomer = customer.listTastes;
+        let listTastesAdd = req.body;
         if (customer == null){
             res.status(404).send("Customer not found.");
+            return;
         }
-        else{
-            const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
-            const listTagsAdd = req.body.listTastes.map(tagName => tagName.tagName);
-            for (let i = 0; i<listTagsAdd.length; i++){
-                if (listTagsCustomer.includes(listTagsAdd[i])){
-                    return res.status(409).send("Taste already exists.");
-                }
-                else{
-                    listTastesCustomer.push(req.body.listTastes[i]);
-                }
+        //Customer.findByIdAndUpdate({_id: req.params._id}, {$push: {listTastes: listTastesAdd}})
+        const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
+        const listTagsAdd = req.body.listTastes.map(tagName => tagName.tagName);
+        for (let i = 0; i<listTagsAdd.length; i++){
+            if (listTagsCustomer.includes(listTagsAdd[i])){
+                return res.status(409).send("Taste already exists.");
             }
-            await customer.updateOne({listTastes: listTastesCustomer});
-            res.status(200).send("Tastes updated."); 
+            else{
+                listTastesCustomer.push(req.body.listTastes[i]);
+            }
         }
+        await customer.updateOne({listTastes: listTastesCustomer});
+        res.status(200).send("Tastes updated."); 
+        
     }
 
     public async removeTaste(req: Request, res: Response) : Promise<any> {
         const customer = await Customer.findById(req.params._id);
-        let listTastesCustomer = customer.listTastes;
         if (customer == null){
             res.status(404).send("Customer not found.");
+            return;
         }
-        else{
-            const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
-            const listTagsRm = req.body.listTastes.map(tagName => tagName.tagName);
-            for (let i = 0; i<listTagsRm.length; i++){
-                const index = listTagsCustomer.indexOf(listTagsRm[i]);
-                if (index == -1){
-                    return res.status(409).send("The user might not have some of these tastes yet.");
-                }
-                else{
-                    listTastesCustomer.splice(index,1);
-                }
+        let listTastesCustomer = customer.listTastes;
+        const listTagsCustomer = listTastesCustomer.map(taste => taste.tagName);
+        const listTagsRm = req.body.listTastes.map(tagName => tagName.tagName);
+        for (let i = 0; i<listTagsRm.length; i++){
+            const index = listTagsCustomer.indexOf(listTagsRm[i]);
+            if (index == -1){
+                return res.status(409).send("The user might not have some of these tastes yet.");
             }
-        }   
+            else{
+                listTastesCustomer.splice(index,1);
+            }
+        }
+          
         await customer.updateOne({listTastes: listTastesCustomer});
         return res.status(200).send("Taste deleted.")
     }
@@ -120,13 +130,13 @@ class CustomerRoutes {
 
     routes() {
         this.router.get('/', this.getAllCustomers);
-        this.router.get('/:_id', this.getCustomerById);
-        this.router.get('/name/:customerName', this.getCustomerByName);
-        this.router.post('/', this.addCustomer);
-        this.router.put('/:_id', this.updateCustomer);
-        this.router.put('/tastes/add/:_id', this.addTaste);
-        this.router.put('/tastes/remove/:_id', this.removeTaste);
-        this.router.delete('/:_id', this.deleteCustomer);
+        this.router.get('/:_id', authJwt.verifyToken, this.getCustomerById);
+        this.router.get('/name/:customerName', authJwt.verifyToken, this.getCustomerByName);
+        this.router.post('/', authJwt.verifyToken, this.addCustomer);
+        this.router.put('/:_id', authJwt.verifyToken, this.updateCustomer);
+        this.router.put('/tastes/add/:_id', authJwt.verifyToken, this.addTaste);
+        this.router.put('/tastes/remove/:_id', authJwt.verifyToken, this.removeTaste);
+        this.router.delete('/:_id', authJwt.verifyToken, this.deleteCustomer);
     }
 }
 const customersRoutes = new CustomerRoutes();
