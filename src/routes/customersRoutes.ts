@@ -190,14 +190,15 @@ class CustomerRoutes {
 
     routes() {
         this.router.get('/', this.getAllCustomers);
-        this.router.put('/discounts/add/:_id', this.addDiscount);
-        this.router.get('/:_id', authJwt.verifyToken, this.getCustomerById);
-        this.router.get('/name/:customerName', authJwt.verifyToken, this.getCustomerByName);
-        this.router.post('/', authJwt.verifyToken, this.addCustomer);
-        this.router.put('/:_id', authJwt.verifyToken, this.updateCustomer);
-        this.router.put('/tastes/add/:_id', authJwt.verifyToken, this.addTaste);
-        this.router.put('/tastes/remove/:_id', authJwt.verifyToken, this.removeTaste);
-        this.router.delete('/:_id', authJwt.verifyToken, this.deleteCustomer);
+        this.router.put('/discounts/add/:_id', [authJwt.verifyToken], this.addDiscount);
+        this.router.put('/discounts/remove/:_id', [authJwt.verifyToken], this.removeDiscount);
+        this.router.get('/:_id', [authJwt.verifyToken], this.getCustomerById);
+        this.router.get('/name/:customerName', [authJwt.verifyToken], this.getCustomerByName);
+        this.router.post('/', [authJwt.verifyToken], this.addCustomer);
+        this.router.put('/:_id', [authJwt.verifyToken], this.updateCustomer);
+        this.router.put('/tastes/add/:_id', [authJwt.verifyToken], this.addTaste);
+        this.router.put('/tastes/remove/:_id', [authJwt.verifyToken], this.removeTaste);
+        this.router.delete('/:_id', [authJwt.verifyToken], this.deleteCustomer);
     }
 }
 const customersRoutes = new CustomerRoutes();
