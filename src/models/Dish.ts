@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {Schema, model} from 'mongoose';
 
-const MenuSchema = new Schema({  //Each entry is a dish.
+const DishSchema = new Schema({  //Each entry is a dish.
     restaurant: {type:mongoose.Schema.Types.ObjectId, ref:"Restaurant", required:true},
     title:{type:String, required:true},
     type:{type:String, required:true}, //Appetizer, main, dessert, etc.
@@ -10,4 +10,4 @@ const MenuSchema = new Schema({  //Each entry is a dish.
     rating:{type:Number}
 })
 
-export default model('Menu', MenuSchema);
+export default model('Menu', DishSchema);

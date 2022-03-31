@@ -1,25 +1,25 @@
 import {Request, response, Response, Router} from 'express';
 
-import Menu from '../models/Menu';
+import Menu from '../models/Dish';
 
-class MenuRoutes {
+class DishesRoutes {
     public router: Router;
     constructor() {
         this.router = Router();
         this.routes(); //This has to be written here so that the method can actually be configured when called externally.
     }
 
-    public async getAllMenus(req: Request, res: Response) : Promise<void> { //It returns a void, but internally it's a promise.
+    public async getAllDishes(req: Request, res: Response) : Promise<void> { //It returns a void, but internally it's a promise.
         const allMenus = await Menu.find();
         if (allMenus.length == 0){
-            res.status(404).send("There are no menus yet.")
+            res.status(404).send("There are no dishes yet.")
         }
         else{
             res.status(200).send(allMenus);
         }
     }
 
-    public async getMenuById(req: Request, res: Response) : Promise<void> {
+    public async getDishById(req: Request, res: Response) : Promise<void> {
         const menuFound = await Menu.findById(req.params._id).populate('restaurant');
         if(menuFound == null){
             res.status(404).send("Menu not found.");
@@ -29,42 +29,42 @@ class MenuRoutes {
         }
     }
     
-    public async addMenu(req: Request, res: Response) : Promise<void> {
+    public async addDish(req: Request, res: Response) : Promise<void> {
         const {restaurant, title, type, description, price} = req.body;
         const newMenu = new Menu({restaurant, title, type, description, price});
         await newMenu.save();
-        res.status(201).send('Menu added.');
+        res.status(201).send('Dish added.');
         
     }
 
-    public async updateMenu (req: Request, res: Response) : Promise<void> {
+    public async updateDish (req: Request, res: Response) : Promise<void> {
         const menuToUpdate = await Menu.findByIdAndUpdate (req.params._id, req.body);
         if(menuToUpdate == null){
-            res.status(404).send("Menu not found.");
+            res.status(404).send("Dish not found.");
         }
         else{
-            res.status(201).send("Menu updated.");
+            res.status(201).send("Dish updated.");
         }
     }
 
-    public async deleteMenu (req: Request, res: Response) : Promise<void> {
+    public async deleteDish (req: Request, res: Response) : Promise<void> {
         const menuToDelete = await Menu.findByIdAndDelete (req.params._id);
         if (menuToDelete == null){
-            res.status(404).send("Menu not found.")
+            res.status(404).send("Dish not found.")
         }
         else{
-            res.status(200).send('Menu deleted.');
+            res.status(200).send('Dish deleted.');
         }
     } 
 
     routes() {
-        this.router.get('/', this.getAllMenus);
-        this.router.get('/:_id', this.getMenuById);
-        this.router.post('/', this.addMenu);
-        this.router.put('/:_id', this.updateMenu);
-        this.router.delete('/:_id', this.deleteMenu);
+        this.router.get('/', this.getAllDishes);
+        this.router.get('/:_id', this.getDishById);
+        this.router.post('/', this.addDish);
+        this.router.put('/:_id', this.updateDish);
+        this.router.delete('/:_id', this.deleteDish);
     }
 }
-const menusRoutes = new MenuRoutes();
+const dishesRoutes = new DishesRoutes();
 
-export default menusRoutes.router;
+export default dishesRoutes.router;
