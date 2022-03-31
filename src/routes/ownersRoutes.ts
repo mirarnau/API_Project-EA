@@ -26,7 +26,7 @@ class OwnersRoutes {
     
 
     public async getOwnerById(req: Request, res: Response) : Promise<void> {
-        const ownerFound = await Owner.findById(req.params._id);
+        const ownerFound = await Owner.findById(req.params._id).populate("listRestaurants");
         if(ownerFound == null){
             res.status(404).send("Owner not found.");
         }

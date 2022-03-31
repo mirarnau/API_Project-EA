@@ -52,7 +52,6 @@ class ReservationsRoutes {
         }
         let listReservationsCustomer: mongoose.Types.ObjectId [];
         listReservationsCustomer  = customer.listReservations;
-        let listReservationsUpdated: mongoose.Types.ObjectId [];
         let newReservationID: mongoose.Types.ObjectId;
         await newReservation.save().then(reservation => {
             newReservationID = reservation._id.toString();
@@ -61,8 +60,36 @@ class ReservationsRoutes {
         await Customer.findByIdAndUpdate({_id: _idCustomer}, {listReservations: listReservationsCustomer});
         res.status(201).send('Reservation added and customer updated.');
         
-            
-        
+    }
+
+    public async updateReservation(req: Request, res: Response) : Promise<void> {
+        const reservation = await Reservation.findById (req.params._id);
+        if (reservation == null){
+            res.status(404).send("Reservation not found");
+            return;
+        }
+        const customer = await Customer.findById(req.body._idCustomer);
+        if (customer == null){
+            res.status(404).send("Customer not found.");
+            return;
+        }
+        const restaurant = Restaurant.findById(req.body._idRestaurant);
+        if (restaurant == null){
+            res.status(404).send("Restaurant not found");
+            return;
+        }
+
+        await Reservation.findByIdAndUpdate({_id: req.params._id}, req.body);
+
+        let listReservationsCustomer = customer.listReservations;
+        for (let i = 0; i<listReservationsCustomer.length; i++){
+            if (listReservationsCustomer[i]._id == reservation._id){
+                listReservationsCustomer.splice(i, 1);
+            }
+        }
+        await Customer.findByIdAndUpdate({_id: req.body._idCustomer},{listReservations: listReservationsCustomer});
+        res.status(201).send('Reservation updated.');
+    
     }
 
 
@@ -82,7 +109,6 @@ class ReservationsRoutes {
         let listReservationsCustomer = customer.listReservations;
         for (let i = 0; i<listReservationsCustomer.length; i++){
             if (listReservationsCustomer[i].toString() == reservationToDelete._id.toString()){
-                console.log("AAAAAAAAAAA")
                 listReservationsCustomer.splice(i, 1);
             }
         }
@@ -98,6 +124,7 @@ class ReservationsRoutes {
         this.router.get('/', this.getAllReservations);
         this.router.get('/:_id', this.getReservationById);
         this.router.post('/', this.addReservation);
+        this.router.put('/:_id', this.updateReservation)
         this.router.delete('/:_id', this.deleteReservation);
     }
 }
