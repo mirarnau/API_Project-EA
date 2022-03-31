@@ -1,5 +1,9 @@
 import {Request, response, Response, Router} from 'express';
 import { request } from 'http';
+import {authJwt} from '../middlewares/index';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config from '../config';
 
 import Owner from '../models/Owner';
 
@@ -49,9 +53,15 @@ class OwnersRoutes {
         }
         else{
             const {ownerName, fullName, email, password} = req.body;
-            const newOwner = new Owner({ownerName, fullName, email, password});
-            await newOwner.save();
-            res.status(201).send('Owner added.');
+            const salt = await bcrypt.genSalt(10);
+            const hashed = await bcrypt.hash(password, salt);
+            const newOwner = new Owner({ownerName, fullName, email, password: hashed});
+
+            const savedOwner = await newOwner.save();
+            const token = jwt.sign({id: savedOwner._id, username: savedOwner.ownerName}, config.SECRET,{
+                expiresIn: 3600 //seconds
+            });
+            res.status(201).send({token});
         }
     }
 

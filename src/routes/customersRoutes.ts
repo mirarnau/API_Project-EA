@@ -1,7 +1,11 @@
 import {Request, response, Response, Router} from 'express';
-
+import {authJwt} from '../middlewares/index';
 import Customer from '../models/Customer';
 import Restaurant from '../models/Restaurant';
+import bcrypt, { hash } from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import config from '../config';
+
 
 class CustomerRoutes {
     public router: Router;
@@ -47,9 +51,14 @@ class CustomerRoutes {
         }
         else{
             const {customerName, fullName, email, password} = req.body;
-            const newCustomer = new Customer({customerName, fullName, email, password});
-            await newCustomer.save();
-            res.status(201).send('Customer added.');
+            const salt = await bcrypt.genSalt(10);
+            const hashed = await bcrypt.hash(password, salt);
+            const newCustomer = new Customer({customerName, fullName, email, password: hashed});
+            const savedUser = await newCustomer.save();
+            const token = jwt.sign({id: newCustomer._id, customerName: savedUser.customerName}, config.SECRET,{
+            expiresIn: 3600 //seconds
+            });
+            res.status(200).json({token});
         }
     }
 
@@ -181,15 +190,14 @@ class CustomerRoutes {
 
     routes() {
         this.router.get('/', this.getAllCustomers);
-        this.router.get('/:_id', this.getCustomerById);
-        this.router.get('/name/:customerName', this.getCustomerByName);
-        this.router.post('/', this.addCustomer);
-        this.router.put('/:_id', this.updateCustomer);
         this.router.put('/discounts/add/:_id', this.addDiscount);
-        this.router.put('/discounts/remove/:_id', this.removeDiscount);
-        this.router.put('/tastes/add/:_id', this.addTaste);
-        this.router.put('/tastes/remove/:_id', this.removeTaste);
-        this.router.delete('/:_id', this.deleteCustomer);
+        this.router.get('/:_id', authJwt.verifyToken, this.getCustomerById);
+        this.router.get('/name/:customerName', authJwt.verifyToken, this.getCustomerByName);
+        this.router.post('/', authJwt.verifyToken, this.addCustomer);
+        this.router.put('/:_id', authJwt.verifyToken, this.updateCustomer);
+        this.router.put('/tastes/add/:_id', authJwt.verifyToken, this.addTaste);
+        this.router.put('/tastes/remove/:_id', authJwt.verifyToken, this.removeTaste);
+        this.router.delete('/:_id', authJwt.verifyToken, this.deleteCustomer);
     }
 }
 const customersRoutes = new CustomerRoutes();
