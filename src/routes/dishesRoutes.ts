@@ -1,6 +1,6 @@
 import {Request, response, Response, Router} from 'express';
 
-import Menu from '../models/Dish';
+import Dish from '../models/Dish';
 
 class DishesRoutes {
     public router: Router;
@@ -10,7 +10,7 @@ class DishesRoutes {
     }
 
     public async getAllDishes(req: Request, res: Response) : Promise<void> { //It returns a void, but internally it's a promise.
-        const allMenus = await Menu.find();
+        const allMenus = await Dish.find();
         if (allMenus.length == 0){
             res.status(404).send("There are no dishes yet.")
         }
@@ -20,7 +20,7 @@ class DishesRoutes {
     }
 
     public async getDishById(req: Request, res: Response) : Promise<void> {
-        const menuFound = await Menu.findById(req.params._id).populate('restaurant');
+        const menuFound = await Dish.findById(req.params._id).populate('restaurant');
         if(menuFound == null){
             res.status(404).send("Menu not found.");
         }
@@ -30,15 +30,20 @@ class DishesRoutes {
     }
     
     public async addDish(req: Request, res: Response) : Promise<void> {
+        const dishFound = await Dish.findOne({restaurant: req.body.restaurant, title: req.body.title,
+        type: req.body.type, description: req.body.description, price: req.body.price});
+        if (dishFound != null){
+            res.status(409).send("Dish already added")
+        }
         const {restaurant, title, type, description, price} = req.body;
-        const newMenu = new Menu({restaurant, title, type, description, price});
+        const newMenu = new Dish({restaurant, title, type, description, price});
         await newMenu.save();
         res.status(201).send('Dish added.');
         
     }
 
     public async updateDish (req: Request, res: Response) : Promise<void> {
-        const menuToUpdate = await Menu.findByIdAndUpdate (req.params._id, req.body);
+        const menuToUpdate = await Dish.findByIdAndUpdate (req.params._id, req.body);
         if(menuToUpdate == null){
             res.status(404).send("Dish not found.");
         }
@@ -48,7 +53,7 @@ class DishesRoutes {
     }
 
     public async deleteDish (req: Request, res: Response) : Promise<void> {
-        const menuToDelete = await Menu.findByIdAndDelete (req.params._id);
+        const menuToDelete = await Dish.findByIdAndDelete (req.params._id);
         if (menuToDelete == null){
             res.status(404).send("Dish not found.")
         }

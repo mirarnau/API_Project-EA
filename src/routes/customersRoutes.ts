@@ -98,7 +98,7 @@ class CustomerRoutes {
                 await Customer.findByIdAndUpdate({_id: req.params._id}, {$push: {listDiscounts : discount}});
             }
         }
-        res.status(200).send("Discounts updated."); 
+        res.status(201).send("Discounts added."); 
         
     }
 
@@ -151,7 +151,7 @@ class CustomerRoutes {
             }
         }
         await customer.updateOne({listTastes: listTastesCustomer});
-        res.status(200).send("Tastes updated."); 
+        res.status(201).send("Tastes added."); 
         
     }
 
@@ -191,13 +191,13 @@ class CustomerRoutes {
     routes() {
         this.router.get('/', this.getAllCustomers);
         this.router.put('/discounts/add/:_id', this.addDiscount);
-        this.router.get('/:_id', authJwt.verifyToken, this.getCustomerById);
-        this.router.get('/name/:customerName', authJwt.verifyToken, this.getCustomerByName);
-        this.router.post('/', authJwt.verifyToken, this.addCustomer);
-        this.router.put('/:_id', authJwt.verifyToken, this.updateCustomer);
-        this.router.put('/tastes/add/:_id', authJwt.verifyToken, this.addTaste);
-        this.router.put('/tastes/remove/:_id', authJwt.verifyToken, this.removeTaste);
-        this.router.delete('/:_id', authJwt.verifyToken, this.deleteCustomer);
+        this.router.get('/:_id', this.getCustomerById);
+        this.router.get('/name/:customerName', this.getCustomerByName);
+        this.router.post('/', this.addCustomer);
+        this.router.put('/:_id', this.updateCustomer);
+        this.router.put('/tastes/add/:_id', this.addTaste);
+        this.router.put('/tastes/remove/:_id', this.removeTaste);
+        this.router.delete('/:_id', this.deleteCustomer);
     }
 }
 const customersRoutes = new CustomerRoutes();
