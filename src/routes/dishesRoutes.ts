@@ -1,6 +1,7 @@
 import {Request, response, Response, Router} from 'express';
 
 import Dish from '../models/Dish';
+import Restaurant from '../models/Restaurant';
 
 class DishesRoutes {
     public router: Router;
@@ -38,7 +39,8 @@ class DishesRoutes {
         const {restaurant, title, type, description, price} = req.body;
         const newMenu = new Dish({restaurant, title, type, description, price});
         await newMenu.save();
-        res.status(201).send('Dish added.');
+        const restaurantUpdated =  await Restaurant.findByIdAndUpdate({_id: req.body.restaurant}, {$push: {listMenus: newMenu}})
+        res.status(201).send('Dish added and restaurant updated.');
         
     }
 
