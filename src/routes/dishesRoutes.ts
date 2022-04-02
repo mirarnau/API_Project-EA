@@ -39,7 +39,7 @@ class DishesRoutes {
         const {restaurant, title, type, description, price} = req.body;
         const newMenu = new Dish({restaurant, title, type, description, price});
         await newMenu.save();
-        const restaurantUpdated =  await Restaurant.findByIdAndUpdate({_id: req.body.restaurant}, {$push: {listMenus: newMenu}})
+        const restaurantUpdated =  await Restaurant.findByIdAndUpdate({_id: req.body.restaurant}, {$push: {listDishes: newMenu}})
         res.status(201).send('Dish added and restaurant updated.');
         
     }
@@ -55,12 +55,25 @@ class DishesRoutes {
     }
 
     public async deleteDish (req: Request, res: Response) : Promise<void> {
-        const menuToDelete = await Dish.findByIdAndDelete (req.params._id);
-        if (menuToDelete == null){
-            res.status(404).send("Dish not found.")
+        const dishToDelete = await Dish.findById (req.params._id);
+        const restaurant = await Restaurant.findById(dishToDelete.restaurant._id);
+        let dishesUpdated = restaurant.listDishes;
+        if (dishToDelete == null){
+            res.status(404).send("Dish not found.");
+            return;
         }
-        else{
-            res.status(200).send('Dish deleted.');
+        if (restaurant == null){
+            res.status(404).send("Restaurant not found.");
+            return;
+        }
+        for (let i = 0; i<restaurant.listDishes.length; i++){
+            if (restaurant.listDishes[i]._id == req.params._id){
+                dishesUpdated.splice(i,1);
+                await Dish.findByIdAndRemove(req.params._id);
+                await Restaurant.findByIdAndUpdate({_id: dishToDelete.restaurant._id}, {listDishes: dishesUpdated});
+                res.status(200).send('Dish deleted and restaurant updated.');
+                return;
+            }
         }
     } 
 

@@ -13,7 +13,7 @@ const RestaurantSchema = new Schema({
     listTags:[{
         tagName:{type:String} 
     }],
-    listMenus:[] //Array containing the IDs of the menus.
+    listDishes:[] //Array containing the IDs of the menus.
 })
 
 export default model('Restaurant', RestaurantSchema);
