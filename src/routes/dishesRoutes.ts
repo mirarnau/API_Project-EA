@@ -38,6 +38,7 @@ class DishesRoutes {
         }
         const {restaurant, title, type, description, price, imageUrl, rating} = req.body;
         const newMenu = new Dish({restaurant, title, type, description, price, imageUrl, rating});
+
         await newMenu.save();
         const restaurantUpdated =  await Restaurant.findByIdAndUpdate({_id: req.body.restaurant}, {$push: {listDishes: newMenu}})
         res.status(201).send('Dish added and restaurant updated.');
@@ -66,7 +67,7 @@ class DishesRoutes {
             res.status(404).send("Restaurant not found.");
             return;
         }
-        for (let i = 0; i<restaurant.listDishes.length; i++){
+        for (let i = 0; i < restaurant.listDishes.length; i++){
             if (restaurant.listDishes[i]._id == req.params._id){
                 dishesUpdated.splice(i,1);
                 await Dish.findByIdAndRemove(req.params._id);
