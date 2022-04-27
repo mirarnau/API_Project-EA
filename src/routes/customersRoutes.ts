@@ -49,14 +49,15 @@ class CustomerRoutes {
         if(!userFound) return res.status(400).json({message: "User not found"});
 
         const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
+        
         if(!matchPassword) return res.status(401).json({token: null, message: "Ivalid password"});
 
-        const token = jwt.sign({id: userFound._id, username: userFound.username}, config.SECRET, {
+        /*const token = jwt.sign({id: userFound._id, username: userFound.username}, config.SECRET, {
             expiresIn: 3600
         });
 
         return res.json({token});
-        console.log(token);
+        console.log(token);*/
 
     }
     
@@ -209,7 +210,7 @@ class CustomerRoutes {
         this.router.put('/discounts/add/:_id', this.addDiscount);
         this.router.get('/:_id', this.getCustomerById);
         this.router.get('/name/:customerName', this.getCustomerByName);
-        this.router.post('/customers', this.addCustomer);
+        this.router.post('/', this.addCustomer);
         this.router.post('/login', this.login);
         this.router.put('/:_id', this.updateCustomer);
         this.router.put('/tastes/add/:_id', this.addTaste);
