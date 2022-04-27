@@ -55,10 +55,10 @@ class CustomerRoutes {
             const hashed = await bcrypt.hash(password, salt);
             const newCustomer = new Customer({customerName, fullName, email, password: hashed});
             const savedUser = await newCustomer.save();
-            const token = jwt.sign({id: newCustomer._id, customerName: savedUser.customerName}, config.SECRET,{
+            /*const token = jwt.sign({id: newCustomer._id, customerName: savedUser.customerName}, config.SECRET,{
             expiresIn: 3600 //seconds
-            });
-            res.status(200).json({token});
+            });*/
+            res.status(200).json("Customer added");
         }
     }
 

@@ -7,6 +7,7 @@ const CustomerSchema = new Schema({
     email: {type: String, required:true},
     password: {type: String, required:true},
     creationDate: {type: Date, default:Date.now},
+    profilePic: {type:String},
     listTastes:[{
         tagName:{type:String},
         relevance:{type:Number}  //This value will be dynamically updated with the user activity.

@@ -36,8 +36,8 @@ class DishesRoutes {
         if (dishFound != null){
             res.status(409).send("Dish already added")
         }
-        const {restaurant, title, type, description, price} = req.body;
-        const newMenu = new Dish({restaurant, title, type, description, price});
+        const {restaurant, title, type, description, price, imageUrl, rating} = req.body;
+        const newMenu = new Dish({restaurant, title, type, description, price, imageUrl, rating});
         await newMenu.save();
         const restaurantUpdated =  await Restaurant.findByIdAndUpdate({_id: req.body.restaurant}, {$push: {listDishes: newMenu}})
         res.status(201).send('Dish added and restaurant updated.');

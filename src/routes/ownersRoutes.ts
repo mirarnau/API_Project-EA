@@ -56,12 +56,11 @@ class OwnersRoutes {
             const salt = await bcrypt.genSalt(10);
             const hashed = await bcrypt.hash(password, salt);
             const newOwner = new Owner({ownerName, fullName, email, password: hashed});
-
             const savedOwner = await newOwner.save();
-            const token = jwt.sign({id: savedOwner._id, username: savedOwner.ownerName}, config.SECRET,{
+            /*const token = jwt.sign({id: savedOwner._id, username: savedOwner.ownerName}, config.SECRET,{
                 expiresIn: 3600 //seconds
-            });
-            res.status(201).send({token});
+            })*/
+            res.status(201).send("Owner added");
         }
     }
 

@@ -6,7 +6,8 @@ const DishSchema = new Schema({  //Each entry is a dish.
     title:{type:String, required:true},
     type:{type:String, required:true}, //Appetizer, main, dessert, etc.
     description:{type:String, required:true},
-    price:{type:Number, required:true},
+    price:{type:String, required:true},
+    imageUrl: {type:String},
     rating:{type:Number}
 })
 
