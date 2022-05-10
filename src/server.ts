@@ -24,9 +24,8 @@ class Server {
 
     config() {
         //MongoDB settings
-        const MONGO_URI = 'mongodb://localhost/EA-PROJECT';
-        mongoose.connect(MONGO_URI || process.env.MONGODB_URL)
-        .then(db => console.log("DB is connected"));
+        let DB_URL = process.env.DB_URL || 'mongodb://localhost/EA-PROJECT';
+        mongoose.connect(DB_URL).then(db => console.log("DB is connected"));
 
         //Settings
         this.app.set('port', process.env.PORT || 3000); 
