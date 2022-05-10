@@ -43,6 +43,23 @@ class CustomerRoutes {
             res.status(200).send(customerFound);
         }
     }
+
+    public async login(req: Request, res: Response) {
+        const userFound = await Customer.findOne({email: req.body.email});
+        if(!userFound) return res.status(400).json({message: "User not found"});
+
+        const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
+        
+        if(!matchPassword) return res.status(401).json({token: null, message: "Ivalid password"});
+
+        /*const token = jwt.sign({id: userFound._id, username: userFound.username}, config.SECRET, {
+            expiresIn: 3600
+        });
+
+        return res.json({token});
+        console.log(token);*/
+
+    }
     
     public async addCustomer(req: Request, res: Response) : Promise<void> {
         const customerFound = await Customer.findOne({customerName: req.body.customerName})
@@ -55,10 +72,10 @@ class CustomerRoutes {
             const hashed = await bcrypt.hash(password, salt);
             const newCustomer = new Customer({customerName, fullName, email, password: hashed});
             const savedUser = await newCustomer.save();
-            const token = jwt.sign({id: newCustomer._id, customerName: savedUser.customerName}, config.SECRET,{
+            /*const token = jwt.sign({id: newCustomer._id, customerName: savedUser.customerName}, config.SECRET,{
             expiresIn: 3600 //seconds
-            });
-            res.status(200).json({token});
+            });*/
+            res.status(200).json("Customer added");
         }
     }
 
@@ -98,7 +115,7 @@ class CustomerRoutes {
                 await Customer.findByIdAndUpdate({_id: req.params._id}, {$push: {listDiscounts : discount}});
             }
         }
-        res.status(200).send("Discounts updated."); 
+        res.status(201).send("Discounts added."); 
         
     }
 
@@ -151,7 +168,7 @@ class CustomerRoutes {
             }
         }
         await customer.updateOne({listTastes: listTastesCustomer});
-        res.status(200).send("Tastes updated."); 
+        res.status(201).send("Tastes added."); 
         
     }
 

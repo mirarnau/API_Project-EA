@@ -10,7 +10,7 @@ import customersRoutes from './routes/customersRoutes';
 import ownersRoutes from './routes/ownersRoutes';
 import restaurantsRoutes from './routes/restaurantsRoutes';
 import reservationsRoutes from './routes/reservationsRoutes';
-import menusRoutes from './routes/menuRoutes';
+import dishesRoutes from './routes/dishesRoutes';
 
 class Server {
     public app: express.Application;
@@ -24,9 +24,8 @@ class Server {
 
     config() {
         //MongoDB settings
-        const MONGO_URI = 'mongodb://localhost/EA-PROJECT';
-        mongoose.connect(MONGO_URI || process.env.MONGODB_URL)
-        .then(db => console.log("DB is connected"));
+        let DB_URL = process.env.DB_URL || 'mongodb://localhost/EA-PROJECT';
+        mongoose.connect(DB_URL).then(db => console.log("DB is connected"));
 
         //Settings
         this.app.set('port', process.env.PORT || 3000); 
@@ -46,7 +45,7 @@ class Server {
         this.app.use('/api/owners', ownersRoutes);
         this.app.use('/api/restaurants', restaurantsRoutes);
         this.app.use('/api/reservations', reservationsRoutes);
-        this.app.use('/api/menus', menusRoutes)
+        this.app.use('/api/dishes', dishesRoutes)
     }
 
     start() {

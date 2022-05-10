@@ -52,7 +52,7 @@ class RestaurantsRoutes {
             return;
         }
         const {owner, restaurantName, email, address, description, listTags} = req.body;
-        const newRestaurant = new Restaurant({owner, restaurantName, email, address, description, listTags});
+        const newRestaurant = new Restaurant({owner, restaurantName, email, address, description, listTags, rating: 0});
         let newRestaurantID;
         await newRestaurant.save().then(restaurant => {
             newRestaurantID = restaurant._id.toString();
