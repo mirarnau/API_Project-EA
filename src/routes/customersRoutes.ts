@@ -67,9 +67,9 @@ class CustomerRoutes {
         }
         else{
             const {customerName, fullName, email, password} = req.body;
-            const salt = await bcrypt.genSalt(10);
-            const hashed = await bcrypt.hash(password, salt);
-            const newCustomer = new Customer({customerName, fullName, email, password: hashed});
+            //const salt = await bcrypt.genSalt(10);
+            //const hashed = await bcrypt.hash(password, salt);
+            const newCustomer = new Customer({customerName, fullName, email, password});
             const savedUser = await newCustomer.save();
             /*const token = jwt.sign({id: newCustomer._id, customerName: savedUser.customerName}, config.SECRET,{
             expiresIn: 3600 //seconds
@@ -209,7 +209,7 @@ class CustomerRoutes {
         this.router.put('/discounts/add/:_id', this.addDiscount);
         this.router.get('/:_id', this.getCustomerById);
         this.router.get('/name/:customerName', this.getCustomerByName);
-        this.router.post('/customers', this.addCustomer);
+        this.router.post('/', this.addCustomer);
         this.router.post('/login', this.login);
         this.router.put('/:_id', this.updateCustomer);
         this.router.put('/tastes/add/:_id', this.addTaste);
