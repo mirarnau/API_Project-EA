@@ -3,6 +3,8 @@ import {Request, response, Response, Router} from 'express';
 import Restaurant from '../models/Restaurant';
 import Reservation from '../models/Reservation';
 import Owner from '../models/Owner';
+import { verifyToken } from '../middlewares/authJwt';
+import { authJwt } from '../middlewares';
 
 class RestaurantsRoutes {
     public router: Router;
@@ -134,8 +136,7 @@ class RestaurantsRoutes {
     
     
     routes() {
-        this.router.get('/', this.getAllRestaurants);
-        this.router.get('/:_id', this.getRestaurantById);
+        this.router.get('/', [authJwt.verifyToken], this.getRestaurantById);
         this.router.get('/name/:restaurantName', this.getRestaurantByName);
         this.router.post('/filters/tags', this.filterRestaurants);
         this.router.get('/filters/rating', this.sortByRating)

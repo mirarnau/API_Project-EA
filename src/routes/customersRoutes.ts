@@ -2,7 +2,7 @@ import {Request, response, Response, Router} from 'express';
 import {authJwt} from '../middlewares/index';
 import Customer from '../models/Customer';
 import Restaurant from '../models/Restaurant';
-import bcrypt, { hash } from 'bcryptjs';
+import bcrypt, { compare, hash } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import config from '../config';
 
@@ -45,20 +45,22 @@ class CustomerRoutes {
     }
 
     public async login(req: Request, res: Response) {
-        const userFound = await Customer.findOne({email: req.body.email});
+        console.log(req.body.customerName);
+        const userFound = await Customer.findOne({customerName: req.body.customerName});
         if(!userFound) return res.status(400).json({message: "User not found"});
 
-        const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
+        //const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
         
-        if(!matchPassword) return res.status(401).json({token: null, message: "Ivalid password"});
+        
+        //if(!matchPassword) return res.status(401).json({token: null, message: "Ivalid password"});
+        if (req.body.password != userFound.password) return res.status(401).json({token: null, message: "Invalid password"});
 
-        /*const token = jwt.sign({id: userFound._id, username: userFound.username}, config.SECRET, {
+        const token = jwt.sign({id: userFound._id, username: userFound.username}, config.SECRET, {
             expiresIn: 3600
         });
 
         return res.json({token});
-        console.log(token);*/
-
+        console.log(token);
     }
     
     public async addCustomer(req: Request, res: Response) : Promise<void> {
@@ -70,11 +72,9 @@ class CustomerRoutes {
             const {customerName, fullName, email, password} = req.body;
             //const salt = await bcrypt.genSalt(10);
             //const hashed = await bcrypt.hash(password, salt);
+            //const newCustomer = new Customer({customerName, fullName, email, password: hashed});
             const newCustomer = new Customer({customerName, fullName, email, password});
             const savedUser = await newCustomer.save();
-            /*const token = jwt.sign({id: newCustomer._id, customerName: savedUser.customerName}, config.SECRET,{
-            expiresIn: 3600 //seconds
-            });*/
             res.status(200).json("Customer added");
         }
     }
