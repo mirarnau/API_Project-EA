@@ -1,6 +1,6 @@
 {
-  "name": "fullapp",
-  "version": "1.0.0",
+  "name": "backend",
+  "version": "0.3.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "start": "node ./bin/server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Grup 2: EA",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
