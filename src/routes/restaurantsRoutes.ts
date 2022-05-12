@@ -14,6 +14,7 @@ class RestaurantsRoutes {
     }
 
     public async getAllRestaurants(req: Request, res: Response) : Promise<void> { //It returns a void, but internally it's a promise.
+        console.log(req.header.toString['token']);
         const allRestaurants = await Restaurant.find();
         if (allRestaurants.length == 0){
             res.status(404).send("There are no restaurants yet.")
@@ -136,7 +137,8 @@ class RestaurantsRoutes {
     
     
     routes() {
-        this.router.get('/', [authJwt.verifyToken], this.getRestaurantById);
+        this.router.get('/:_id', [authJwt.verifyToken], this.getRestaurantById);
+        this.router.get('/', [authJwt.verifyToken], this.getAllRestaurants);
         this.router.get('/name/:restaurantName', this.getRestaurantByName);
         this.router.post('/filters/tags', this.filterRestaurants);
         this.router.get('/filters/rating', this.sortByRating)

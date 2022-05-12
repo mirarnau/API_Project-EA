@@ -1,5 +1,6 @@
 import {Request, response, Response, Router} from 'express';
 
+import { authJwt } from '../middlewares';
 import Dish from '../models/Dish';
 import Restaurant from '../models/Restaurant';
 
@@ -79,7 +80,7 @@ class DishesRoutes {
     } 
 
     routes() {
-        this.router.get('/', this.getAllDishes);
+        this.router.get('/', [authJwt.verifyToken], this.getAllDishes);
         this.router.get('/:_id', this.getDishById);
         this.router.post('/', this.addDish);
         this.router.put('/:_id', this.updateDish);
