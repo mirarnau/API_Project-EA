@@ -51,8 +51,8 @@ class RestaurantsRoutes {
             res.status(404).send("Onwer not found.");
             return;
         }
-        const {owner, restaurantName, email, address, description, listTags} = req.body;
-        const newRestaurant = new Restaurant({owner, restaurantName, email, address, description, listTags, rating: 0});
+        const {owner, restaurantName, email, address, city, description, photos, listTags} = req.body;
+        const newRestaurant = new Restaurant({owner, restaurantName, email, address, city,  description, photos, listTags, rating: 0});
         let newRestaurantID;
         await newRestaurant.save().then(restaurant => {
             newRestaurantID = restaurant._id.toString();
@@ -84,6 +84,7 @@ class RestaurantsRoutes {
     
     public async filterRestaurants (req:Request, res: Response) : Promise<void> {
         const listTastesCustomer = req.body.tags;
+        console.log(req.body);
         if (listTastesCustomer.length == 0) {
             res.status(200).send(await Restaurant.find());
         }
