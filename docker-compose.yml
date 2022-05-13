@@ -1,4 +1,4 @@
-version: "2"
+version: "0.3.2"
 services:
   mongo:
     image: mongo:latest
@@ -12,15 +12,15 @@ services:
     ports:
       - 4000:80
 
-  #   webApp:
-  #     build: #tbd
-  #     image: webApp:latest
-  #     container_name: webApp
-  #     ports:
-  #       - 4001:80
-  #     environment:
-  #       - VIRTUAL_HOST=eaweb.chickenkiller.com
-  #       - LETSENCRYPT_HOST=eaweb.chickenkiller.com
+  webApp:
+    build: #tbd
+      image: webApp:latest
+      container_name: webApp
+      ports:
+        - 4001:80
+      environment:
+        - VIRTUAL_HOST=ea2web.soon.it
+        - LETSENCRYPT_HOST=ea2web.soon.it
 
   api:
     image: eduardferre/api-ea2:latest
