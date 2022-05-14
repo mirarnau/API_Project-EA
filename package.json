@@ -11,7 +11,7 @@
     "serve": "NODE_ENV=development node ."
   },
   "keywords": [],
-  "author": "",
+  "author": "Grup 2: EA",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
