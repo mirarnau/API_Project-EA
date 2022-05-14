@@ -21,17 +21,15 @@ services:
     environment:
       - DEFAULT_EMAIL=eduard.ferre.sanchez@estudiantat.upc.edu
 
-  mongo:
-    image: mongo:latest
-    container_name: mongodb
-    volumes:
-      - mongodbData:/data/db
+#  mongo:
+#    image: mongo:latest
+#    container_name: mongodb
+#    volumes:
+#      - mongodbData:/data/db
 
   backoffice:
     image: eduardferre/backoffice-ea:latest
     container_name: backoffice
-    ports:
-      - 4000:80
     environment:
       - VIRTUAL_HOST=ea2backoffice.soon.it
       - LETSENCRYPT_HOST=ea2backoffice.soon.it
@@ -47,14 +45,12 @@ services:
 #      - LETSENCRYPT_HOST=ea2web.soon.it
 
   api:
-    image: eduardferre/api-ea2:latest
+    image: eduardferre/api-ea:latest
     container_name: api
-    ports:
-      - 3000:3000
     environment:
       - VIRTUAL_HOST=ea2api.soon.it
       - VIRTUAL_PORT=3000
       - LETSENCRYPT_HOST=ea2api.soon.it
 
-volumes:
-  mongodbData:
+#volumes:
+#  mongodbData:

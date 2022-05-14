@@ -1,12 +1,14 @@
 {
   "name": "backend",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "",
-  "main": "index.js",
+  "main": "bin/server.js",
   "scripts": {
-    "ts": "tsc -w",
-    "dev": "nodemon ./bin/server.js",
-    "start": "node ./bin/server.js"
+    "tsc": "tsc -w",
+    "build": "tsc",
+    "start": "NODE_ENV=production node .",
+    "dev": "nodemon node .",
+    "serve": "NODE_ENV=development node ."
   },
   "keywords": [],
   "author": "Grup 2: EA",

@@ -13,7 +13,7 @@ class ReservationsRoutes {
         this.routes(); //This has to be written here so that the method can actually be configured when called externally.
     }
 
-    public async getAllReservations(req: Request, res: Response) : Promise<void> { //It returns a void, but internally it's a promise.
+    public async getAllReservations(req: Request, res: Response) : Promise<void> { 
         const allReservations = await Reservation.find();
         if (allReservations.length == 0){
             res.status(404).send("There are no reservations yet.")
@@ -32,7 +32,6 @@ class ReservationsRoutes {
             res.status(200).send(ownerFound);
         }
     }
-
 
     public async addReservation (req: Request, res: Response) : Promise<void> {
         const reservationFound = await Reservation.findOne({_idCustomer: req.body._idCustomer, _idRestaurant: req.body._idRestaurant, dateReservation: req.body.dateReservation});

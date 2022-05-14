@@ -3,6 +3,8 @@ import {Request, response, Response, Router} from 'express';
 import Restaurant from '../models/Restaurant';
 import Reservation from '../models/Reservation';
 import Owner from '../models/Owner';
+import { verifyToken } from '../middlewares/authJwt';
+import { authJwt } from '../middlewares';
 
 class RestaurantsRoutes {
     public router: Router;
@@ -51,8 +53,8 @@ class RestaurantsRoutes {
             res.status(404).send("Onwer not found.");
             return;
         }
-        const {owner, restaurantName, email, address, description, listTags} = req.body;
-        const newRestaurant = new Restaurant({owner, restaurantName, email, address, description, listTags, rating: 0});
+        const {owner, restaurantName, email, address, city, description, photos, listTags} = req.body;
+        const newRestaurant = new Restaurant({owner, restaurantName, email, address, city,  description, photos, listTags, rating: 0});
         let newRestaurantID;
         await newRestaurant.save().then(restaurant => {
             newRestaurantID = restaurant._id.toString();
@@ -84,8 +86,9 @@ class RestaurantsRoutes {
     
     public async filterRestaurants (req:Request, res: Response) : Promise<void> {
         const listTastesCustomer = req.body.tags;
+        console.log(req.body);
         if (listTastesCustomer.length == 0) {
-            res.status(409).send("No tags specidfied in the petition.");
+            res.status(200).send(await Restaurant.find());
         }
         else {
             const tagsList = listTastesCustomer.map(taste => taste.tagName);
@@ -134,10 +137,9 @@ class RestaurantsRoutes {
     
     
     routes() {
-        this.router.get('/', this.getAllRestaurants);
-        this.router.get('/:_id', this.getRestaurantById);
+        this.router.get('/', [authJwt.verifyToken], this.getRestaurantById);
         this.router.get('/name/:restaurantName', this.getRestaurantByName);
-        this.router.get('/filters/tags', this.filterRestaurants);
+        this.router.post('/filters/tags', this.filterRestaurants);
         this.router.get('/filters/rating', this.sortByRating)
         this.router.post('/', this.addRestaurant);
         this.router.put('/:_id', this.updateRestaurant);
