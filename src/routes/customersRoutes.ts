@@ -16,7 +16,7 @@ class CustomerRoutes {
 
     public async getAllCustomers(req: Request, res: Response) : Promise<void> { //It returns a void, but internally it's a promise.
         const allCustomers = await Customer.find();
-        if (allCustomers.length == 0){
+        if (allCustomers.length == 0) {
             res.status(404).send("There are no customers yet.")
         }
         else{
@@ -26,7 +26,7 @@ class CustomerRoutes {
 
     public async getCustomerById(req: Request, res: Response) : Promise<void> {
         const customerFound = await Customer.findById(req.params._id).populate("listReservations");
-        if(customerFound == null){
+        if(customerFound == null) {
             res.status(404).send("Customer not found.");
         }
         else{
@@ -36,14 +36,14 @@ class CustomerRoutes {
 
     public async getCustomerByName(req: Request, res: Response) : Promise<void> {
         const customerFound = await Customer.findOne({customerName: req.params.customerName});
-        if(customerFound == null){
+        if(customerFound == null) {
             res.status(404).send("Customer not found.");
         }
         else{
             res.status(200).send(customerFound);
         }
     }
-
+  
     public async login(req: Request, res: Response) {
         console.log(req.body.customerName);
         const userFound = await Customer.findOne({customerName: req.body.customerName});
@@ -68,13 +68,14 @@ class CustomerRoutes {
         if (customerFound != null){
             res.status(409).send("This customer already exists.")
         }
-        else{
+        else {
             const {customerName, fullName, email, password} = req.body;
             //const salt = await bcrypt.genSalt(10);
             //const hashed = await bcrypt.hash(password, salt);
             //const newCustomer = new Customer({customerName, fullName, email, password: hashed});
             const newCustomer = new Customer({customerName, fullName, email, password});
             const savedUser = await newCustomer.save();
+          
             res.status(200).json("Customer added");
         }
     }

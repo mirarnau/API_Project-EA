@@ -1,4 +1,4 @@
-version: "2"
+version: "0.3.2"
 services:
   mongo:
     image: mongo:latest
@@ -7,7 +7,7 @@ services:
       - mongodbData:/data/db
 
   backoffice:
-    image: eduardferre/backoffice:latest
+    image: eduardferre/backoffice-ea:latest
     container_name: backoffice
     ports:
       - 4000:80
@@ -23,7 +23,7 @@ services:
   #       - LETSENCRYPT_HOST=eaweb.chickenkiller.com
 
   api:
-    image: eduardferre/api-ea:latest
+    image: eduardferre/api-ea2:latest
     container_name: api
     ports:
       - 3000:3000
