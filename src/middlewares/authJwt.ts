@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import {NextFunction, Request, Response, Router} from 'express';
 import Customer from '../models/Customer';
 import Owner from '../models/Owner';
 import Admin from '../models/Admin';
@@ -40,7 +40,6 @@ export const VerifyToken = async (req: Request, res: Response, next: NextFunctio
       res.status(403).send({ message: "User not authorized" });
       return;
     }
-
   } catch (e) {
     res.status(500).send({ message: `Server error: ${e}` });
     return;
@@ -179,11 +178,11 @@ export const VerifyTokenAdmin = async (req: Request, res: Response, next: NextFu
 
     const role: Array<String> = decoded.role;
 
-    if (!role.includes(Role.OWNER) || !role.includes(Role.ADMIN)) {
+    if (!role.includes(Role.ADMIN)) {
       res.status(403).send({ message: "Role not authorized" });
       return;
     }
-
+    
   } catch (e) {
     res.status(500).send({ message: `Server error: ${e}` });
     return;

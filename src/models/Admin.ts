@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {Schema, model} from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const AdminSchema = new Schema({
     adminName: {type: String, required:true, unique:true},
