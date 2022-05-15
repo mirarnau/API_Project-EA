@@ -3,7 +3,7 @@ import Customer from '../models/Customer';
 import Owner from '../models/Owner';
 import Admin from '../models/Admin';
 import jwt from 'jsonwebtoken';
-import * as Role from '../models/Roles';
+import * as Roles from '../models/Roles';
 
 
 export const VerifyToken = async (req: Request, res: Response, next: NextFunction) => {
@@ -83,7 +83,7 @@ export const VerifyTokenCustomer = async (req: Request, res: Response, next: Nex
 
     const role: Array<String> = decoded.role;
 
-    if (!role.includes(Role.CUSTOMER) || !role.includes(Role.ADMIN)) {
+    if (!role.includes(Roles.CUSTOMER) || !role.includes(Roles.ADMIN)) {
       res.status(403).send({ message: "Role not authorized" });
       return;
     }
@@ -131,7 +131,7 @@ export const VerifyTokenOwner = async (req: Request, res: Response, next: NextFu
 
     const role: Array<String> = decoded.role;
 
-    if (!role.includes(Role.OWNER) || !role.includes(Role.ADMIN)) {
+    if (!role.includes(Roles.OWNER) || !role.includes(Roles.ADMIN)) {
       res.status(403).send({ message: "Role not authorized" });
       return;
     }
@@ -178,7 +178,7 @@ export const VerifyTokenAdmin = async (req: Request, res: Response, next: NextFu
 
     const role: Array<String> = decoded.role;
 
-    if (!role.includes(Role.ADMIN)) {
+    if (!role.includes(Roles.ADMIN)) {
       res.status(403).send({ message: "Role not authorized" });
       return;
     }

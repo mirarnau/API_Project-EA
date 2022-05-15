@@ -56,9 +56,13 @@ class CustomerRoutes {
         //if(!matchPassword) return res.status(401).json({token: null, message: "Ivalid password"});
         if (req.body.password != userFound.password) return res.status(401).json({token: null, message: "Invalid credentials"});
 
-        const token = jwt.sign({id: userFound._id, username: userFound.username}, SECRET!, {
+        const token = jwt.sign(
+            { id: userFound._id, username: userFound.username, role: userFound.role }, 
+            SECRET!, 
+            {
             expiresIn: 3600
-        });
+            }
+        );
 
         return res.json({token});
         console.log(token);
