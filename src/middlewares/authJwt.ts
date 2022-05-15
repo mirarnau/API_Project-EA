@@ -83,7 +83,7 @@ export const VerifyTokenCustomer = async (req: Request, res: Response, next: Nex
 
     const role: Array<String> = decoded.role;
 
-    if (!role.includes(Roles.CUSTOMER) || !role.includes(Roles.ADMIN)) {
+    if (!role.includes(Roles.CUSTOMER) && !role.includes(Roles.ADMIN)) {
       res.status(403).send({ message: "Role not authorized" });
       return;
     }
@@ -131,7 +131,7 @@ export const VerifyTokenOwner = async (req: Request, res: Response, next: NextFu
 
     const role: Array<String> = decoded.role;
 
-    if (!role.includes(Roles.OWNER) || !role.includes(Roles.ADMIN)) {
+    if (!role.includes(Roles.OWNER) && !role.includes(Roles.ADMIN)) {
       res.status(403).send({ message: "Role not authorized" });
       return;
     }
