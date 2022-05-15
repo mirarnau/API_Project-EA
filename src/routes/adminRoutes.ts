@@ -27,7 +27,7 @@ public async login(req: Request, res: Response) : Promise<void> {
         }
         else {
             const token = jwt.sign(
-                { id: adminFound._id, adminName: adminFound.adminName }, 
+                { id: adminFound._id, adminName: adminFound.adminName },
                 SECRET!, 
                 {
                 expiresIn: 3600
