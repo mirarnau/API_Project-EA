@@ -86,12 +86,12 @@ class OwnersRoutes {
 
     
     routes() {
-        this.router.get('/', this.getAllOwners);
-        this.router.get('/:_id', this.getOwnerById);
-        this.router.get('/name/:ownerName', this.getOwnerByName);
-        this.router.post('/', this.addOwner);
-        this.router.put('/:ownerName', this.updateOwner);
-        this.router.delete('/:_id', this.deleteOwner);
+        this.router.get('/', [authJwt.VerifyToken], this.getAllOwners);
+        this.router.get('/:_id', [authJwt.VerifyToken], this.getOwnerById);
+        this.router.get('/name/:ownerName', [authJwt.VerifyToken], this.getOwnerByName);
+        this.router.post('/', this.addOwner); //Anyone should be able to register to the app as an owner
+        this.router.put('/:ownerName', [authJwt.VerifyTokenOwner], this.updateOwner);
+        this.router.delete('/:_id', [authJwt.VerifyTokenOwner], this.deleteOwner);
     }
 }
 const ownersRoutes = new OwnersRoutes();

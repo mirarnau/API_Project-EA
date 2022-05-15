@@ -8,7 +8,8 @@ const OwnerSchema = new Schema({
     email: {type: String, required:true},
     password: {type: String, required:true},
     creationDate: {type: Date, default:Date.now},
-    listRestaurants:[{type:mongoose.Schema.Types.ObjectId, ref: Restaurant}] //Array containing the IDs of the restaurants.
+    listRestaurants:[{type:mongoose.Schema.Types.ObjectId, ref: Restaurant}], //Array containing the IDs of the restaurants.
+    role: { type: [String], default: ["OWNER"] }
 })
 
 

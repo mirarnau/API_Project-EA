@@ -1,6 +1,7 @@
 import {Request, response, Response, Router} from 'express';
 import { request } from 'http';
 import mongoose from 'mongoose';
+import { authJwt } from '../middlewares';
 import Customer from '../models/Customer';
 
 import Reservation from '../models/Reservation';
@@ -120,11 +121,11 @@ class ReservationsRoutes {
 
     
     routes() {
-        this.router.get('/', this.getAllReservations);
-        this.router.get('/:_id', this.getReservationById);
-        this.router.post('/', this.addReservation);
-        this.router.put('/:_id', this.updateReservation)
-        this.router.delete('/:_id', this.deleteReservation);
+        this.router.get('/', [authJwt.VerifyToken], this.getAllReservations);
+        this.router.get('/:_id', [authJwt.VerifyToken], this.getReservationById);
+        this.router.post('/', [authJwt.VerifyToken], this.addReservation);
+        this.router.put('/:_id', [authJwt.VerifyToken], this.updateReservation)
+        this.router.delete('/:_id', [authJwt.VerifyToken], this.deleteReservation);
     }
 }
 

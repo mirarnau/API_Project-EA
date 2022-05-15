@@ -1,9 +1,7 @@
 import {Request, response, Response, Router} from 'express';
-
 import Restaurant from '../models/Restaurant';
 import Reservation from '../models/Reservation';
 import Owner from '../models/Owner';
-import { verifyToken } from '../middlewares/authJwt';
 import { authJwt } from '../middlewares';
 
 class RestaurantsRoutes {
@@ -137,13 +135,14 @@ class RestaurantsRoutes {
     
     
     routes() {
-        this.router.get('/', [authJwt.verifyToken], this.getRestaurantById);
-        this.router.get('/name/:restaurantName', this.getRestaurantByName);
-        this.router.post('/filters/tags', this.filterRestaurants);
-        this.router.get('/filters/rating', this.sortByRating)
-        this.router.post('/', this.addRestaurant);
-        this.router.put('/:_id', this.updateRestaurant);
-        this.router.delete('/:_id', this.deleteRestaurant);
+        this.router.get('/', [authJwt.VerifyToken], this.getAllRestaurants);
+        this.router.get('/:_id', [authJwt.VerifyToken], this.getRestaurantById);
+        this.router.get('/name/:restaurantName', [authJwt.VerifyToken], this.getRestaurantByName);
+        this.router.post('/filters/tags', [authJwt.VerifyToken], this.filterRestaurants);
+        this.router.get('/filters/rating', [authJwt.VerifyToken], this.sortByRating)
+        this.router.post('/', [authJwt.VerifyTokenOwner], this.addRestaurant);
+        this.router.put('/:_id', [authJwt.VerifyTokenOwner], this.updateRestaurant);
+        this.router.delete('/:_id', [authJwt.VerifyTokenOwner], this.deleteRestaurant);
         
     }
 }
