@@ -45,27 +45,32 @@ class CustomerRoutes {
         }
     }
   
-    public async login(req: Request, res: Response) {
-        console.log(req.body.customerName);
-        const userFound = await Customer.findOne({customerName: req.body.customerName});
+    public async login(req: Request, res: Response) : Promise<void> {
+        const userFound = await Customer.findOne({adminName: req.body.adminName});
         const SECRET = process.env.JWT_SECRET;
-
-        if(!userFound) return res.status(400).json({message: "Invalid credentials"});
-
-        //const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
-        //if(!matchPassword) return res.status(401).json({token: null, message: "Ivalid password"});
-        if (req.body.password != userFound.password) return res.status(401).json({token: null, message: "Invalid credentials"});
-
-        const token = jwt.sign(
-            { id: userFound._id, username: userFound.username, role: userFound.role }, 
-            SECRET!, 
-            {
-            expiresIn: 3600
+    
+        if(!userFound) {
+            res.status(400).json({message: "Invalid credentials"});
+        }
+        else {
+            const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
+        
+            if(!matchPassword) {
+                res.status(401).json({token: null, message: "Invalid credentials"});
             }
-        );
-
-        return res.json({token});
-        console.log(token);
+            else {
+                const token = jwt.sign(
+                    { id: userFound._id, customerName: userFound.customerName, role: userFound.role }, 
+                    SECRET!, 
+                    {
+                    expiresIn: 3600
+                    }
+                );
+            
+                res.status(200).send({ token: token });
+                console.log(token);
+            }
+        }
     }
     
     public async addCustomer(req: Request, res: Response) : Promise<void> {
