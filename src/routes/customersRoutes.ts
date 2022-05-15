@@ -46,7 +46,7 @@ class CustomerRoutes {
     }
   
     public async login(req: Request, res: Response) : Promise<void> {
-        const userFound = await Customer.findOne({adminName: req.body.adminName});
+        const userFound = await Customer.findOne({customerName: req.body.customerName});
         const SECRET = process.env.JWT_SECRET;
     
         if(!userFound) {
@@ -80,10 +80,10 @@ class CustomerRoutes {
         }
         else {
             const {customerName, fullName, email, password} = req.body;
-            //const salt = await bcrypt.genSalt(10);
-            //const hashed = await bcrypt.hash(password, salt);
-            //const newCustomer = new Customer({customerName, fullName, email, password: hashed});
-            const newCustomer = new Customer({customerName, fullName, email, password});
+            const salt = await bcrypt.genSalt(10);
+            const hashed = await bcrypt.hash(password, salt);
+            const newCustomer = new Customer({customerName, fullName, email, password: hashed});
+            //const newCustomer = new Customer({customerName, fullName, email, password});
             const savedUser = await newCustomer.save();
           
             res.status(200).json("Customer added");
@@ -219,8 +219,8 @@ class CustomerRoutes {
     routes() {
         this.router.get('/', [authJwt.VerifyTokenAdmin], this.getAllCustomers);
         this.router.put('/discounts/add/:_id', [authJwt.VerifyTokenOwner], this.addDiscount);
-        this.router.get('/:_id', [authJwt.VerifyTokenAdmin], this.getCustomerById);
-        this.router.get('/name/:customerName', [authJwt.VerifyTokenAdmin], this.getCustomerByName);
+        this.router.get('/:_id', [authJwt.VerifyTokenCustomer], this.getCustomerById);
+        this.router.get('/name/:customerName', [authJwt.VerifyTokenCustomer], this.getCustomerByName);
         this.router.post('/', this.addCustomer); //Anyone should be able to register to the app as a customer
         this.router.post('/login', this.login); //Anyone should be able to login to the app as a customer
         this.router.put('/:_id', [authJwt.VerifyTokenCustomer], this.updateCustomer);
