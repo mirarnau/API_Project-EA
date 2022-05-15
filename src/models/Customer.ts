@@ -17,7 +17,8 @@ const CustomerSchema = new Schema({
         amount:{type:Number},
         expirationDate:{type:String}
     }],
-    listReservations: [{type:mongoose.Schema.Types.ObjectId, ref:"Reservation"}] //Array containing the IDs of the reservations of the customer.
+    listReservations: [{type:mongoose.Schema.Types.ObjectId, ref:"Reservation"}], //Array containing the IDs of the reservations of the customer.
+    role: { type: [String], default: ["CUSTOMER"] }
 })
 
 export default model('Customer', CustomerSchema);

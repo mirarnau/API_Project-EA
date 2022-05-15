@@ -1,38 +1,191 @@
 import {NextFunction, Request, Response, Router} from 'express';
 import Customer from '../models/Customer';
 import Owner from '../models/Owner';
-import bcrypt from 'bcryptjs';
+import Admin from '../models/Admin';
 import jwt from 'jsonwebtoken';
-//import Role from '../models/Role';
-import config from "../config";
+import * as Roles from '../models/Roles';
 
 
-export const verifyToken = async (req: any, res: Response, next: NextFunction) => {
-         
-    const token = req.headers["x-access-token"];
-    let jwtPayload;
+export const VerifyToken = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.headers.authorization)
+      return res.status(401).send({ message: "No authorized" });
+    
+      const token = req.headers.authorization;
+
+    if (!token) {
+      res.status(403).send({ message: "Token not provided" });
+      return;
+    }
+
+    if (!(typeof token === "string")) throw "Token not a string";
+
+    const SECRET = process.env.JWT_SECRET;
+    let decoded;
+
     try {
-        jwtPayload = <any>jwt.verify(token, config.SECRET);
-        res.locals.jwtPayload = jwtPayload;
-      } catch (error) {
-        //If token is not valid, respond with 401 (unauthorized)
-        res.status(401).json({message: "No token"});
-        return;
-      }
-      //Check if the user exists
-      const { id, username, password } = jwtPayload;
-      const customer = await Customer.findById(id);
-      if(!customer){
-          const owner = await Owner.findById(id);
-          if (!owner) return res.status(404).json({message: "No user found"});
-      }
-         
-      //Call the next middleware or controller
-      next();
-}
+      decoded = jwt.verify(token!, SECRET!);
+    } catch (e) {
+      res.status(403).send({ message: "Invalid token" });
+      return;
+    }
 
-export const isOwner = async (req: Request, res: Response, next: NextFunction) => {
-    const owner = await Owner.findById(res.locals.jwtPayload.id);
-    if(!owner) return res.status(403).json({message: "You need to be an owner"});
-    next();
-}
+    console.log(decoded!);
+
+    let user = await Customer.findOne({ _id: decoded!.id, disabled: false });
+    if (!user) user = await Owner.findOne({ _id: decoded!.id, disabled: false });
+    if (!user) user = await Admin.findOne({ _id: decoded!.id, disabled: false });
+
+    if (!user) {
+      res.status(403).send({ message: "User not authorized" });
+      return;
+    }
+  } catch (e) {
+    res.status(500).send({ message: `Server error: ${e}` });
+    return;
+  }
+  next();
+};
+
+export const VerifyTokenCustomer = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.headers.authorization)
+      return res.status(401).send({ message: "No authorized" });
+    
+      const token = req.headers.authorization;
+
+    if (!token) {
+      res.status(403).send({ message: "Token not provided" });
+      return;
+    }
+
+    if (!(typeof token === "string")) throw "Token not a string";
+
+    const SECRET = process.env.JWT_SECRET;
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token!, SECRET!);
+    } catch (e) {
+      res.status(403).send({ message: "Invalid token" });
+      return;
+    }
+
+    console.log(decoded!);
+
+    let user = await Customer.findOne({ _id: decoded!.id, disabled: false });
+    if (!user) user = await Admin.findOne({ _id: decoded!.id, disabled: false });
+
+    if (!user) {
+      res.status(403).send({ message: "User not authorized" });
+      return;
+    }
+
+    const role: Array<String> = decoded.role;
+
+    if (!role.includes(Roles.CUSTOMER) || !role.includes(Roles.ADMIN)) {
+      res.status(403).send({ message: "Role not authorized" });
+      return;
+    }
+
+  } catch (e) {
+    res.status(500).send({ message: `Server error: ${e}` });
+    return;
+  }
+  next();
+};
+
+export const VerifyTokenOwner = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.headers.authorization)
+      return res.status(401).send({ message: "No authorized" });
+    
+      const token = req.headers.authorization;
+
+    if (!token) {
+      res.status(403).send({ message: "Token not provided" });
+      return;
+    }
+
+    if (!(typeof token === "string")) throw "Token not a string";
+
+    const SECRET = process.env.JWT_SECRET;
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token!, SECRET!);
+    } catch (e) {
+      res.status(403).send({ message: "Invalid token" });
+      return;
+    }
+
+    console.log(decoded!);
+
+    let user = await Owner.findOne({ _id: decoded!.id, disabled: false });
+    if (!user) user = await Admin.findOne({ _id: decoded!.id, disabled: false });
+
+    if (!user) {
+      res.status(403).send({ message: "User not authorized" });
+      return;
+    }
+
+    const role: Array<String> = decoded.role;
+
+    if (!role.includes(Roles.OWNER) || !role.includes(Roles.ADMIN)) {
+      res.status(403).send({ message: "Role not authorized" });
+      return;
+    }
+
+  } catch (e) {
+    res.status(500).send({ message: `Server error: ${e}` });
+    return;
+  }
+  next();
+};
+
+export const VerifyTokenAdmin = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.headers.authorization)
+      return res.status(401).send({ message: "No authorized" });
+    
+      const token = req.headers.authorization;
+
+    if (!token) {
+      res.status(403).send({ message: "Token not provided" });
+      return;
+    }
+
+    if (!(typeof token === "string")) throw "Token not a string";
+
+    const SECRET = process.env.JWT_SECRET;
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token!, SECRET!);
+    } catch (e) {
+      res.status(403).send({ message: "Invalid token" });
+      return;
+    }
+
+    console.log(decoded!);
+
+    let user = await Admin.findOne({ _id: decoded!.id, disabled: false });
+
+    if (!user) {
+      res.status(403).send({ message: "User not authorized" });
+      return;
+    }
+
+    const role: Array<String> = decoded.role;
+
+    if (!role.includes(Roles.ADMIN)) {
+      res.status(403).send({ message: "Role not authorized" });
+      return;
+    }
+    
+  } catch (e) {
+    res.status(500).send({ message: `Server error: ${e}` });
+    return;
+  }
+  next();
+};
