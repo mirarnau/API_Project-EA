@@ -1,10 +1,7 @@
-import {Request, response, Response, Router} from 'express';
+import {Request, Response, Router} from 'express';
 import {authJwt} from '../middlewares/index';
-import Customer from '../models/Customer';
-import Restaurant from '../models/Restaurant';
 import bcrypt, { hash } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import config from '../config';
 import Admin from '../models/Admin';
 
 class AdminRoutes {
