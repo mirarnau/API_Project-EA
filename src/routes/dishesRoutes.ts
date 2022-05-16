@@ -1,5 +1,4 @@
 import {Request, response, Response, Router} from 'express';
-
 import { authJwt } from '../middlewares';
 import Dish from '../models/Dish';
 import Restaurant from '../models/Restaurant';
@@ -80,11 +79,12 @@ class DishesRoutes {
     } 
 
     routes() {
-        this.router.get('/', [authJwt.verifyToken], this.getAllDishes);
-        this.router.get('/:_id', this.getDishById);
-        this.router.post('/', this.addDish);
-        this.router.put('/:_id', this.updateDish);
-        this.router.delete('/:_id', this.deleteDish);
+
+        this.router.get('/', [authJwt.VerifyToken], this.getAllDishes);
+        this.router.get('/:_id', [authJwt.VerifyToken], this.getDishById);
+        this.router.post('/', [authJwt.VerifyTokenOwner], this.addDish);
+        this.router.put('/:_id', [authJwt.VerifyTokenOwner], this.updateDish);
+        this.router.delete('/:_id', [authJwt.VerifyTokenOwner], this.deleteDish);
     }
 }
 const dishesRoutes = new DishesRoutes();

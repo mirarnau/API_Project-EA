@@ -9,6 +9,7 @@ import config from '../config';
 
 class CustomerRoutes {
     public router: Router;
+
     constructor() {
         this.router = Router();
         this.routes(); //This has to be written here so that the method can actually be configured when called externally.
@@ -44,23 +45,32 @@ class CustomerRoutes {
         }
     }
   
-    public async login(req: Request, res: Response) {
-        console.log(req.body.customerName);
+    public async login(req: Request, res: Response) : Promise<void> {
         const userFound = await Customer.findOne({customerName: req.body.customerName});
-        if(!userFound) return res.status(400).json({message: "User not found"});
-
-        //const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
+        const SECRET = process.env.JWT_SECRET;
+    
+        if(!userFound) {
+            res.status(400).json({message: "Invalid credentials"});
+        }
+        else {
+            const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
         
-        
-        //if(!matchPassword) return res.status(401).json({token: null, message: "Ivalid password"});
-        if (req.body.password != userFound.password) return res.status(401).json({token: null, message: "Invalid password"});
-
-        const token = jwt.sign({id: userFound._id, username: userFound.username}, config.SECRET, {
-            expiresIn: 3600
-        });
-
-        return res.json({token});
-        console.log(token);
+            if(!matchPassword) {
+                res.status(401).json({token: null, message: "Invalid credentials"});
+            }
+            else {
+                const token = jwt.sign(
+                    { id: userFound._id, customerName: userFound.customerName, role: userFound.role }, 
+                    SECRET!, 
+                    {
+                    expiresIn: 3600
+                    }
+                );
+            
+                res.status(200).send({ token: token });
+                console.log(token);
+            }
+        }
     }
     
     public async addCustomer(req: Request, res: Response) : Promise<void> {
@@ -70,10 +80,10 @@ class CustomerRoutes {
         }
         else {
             const {customerName, fullName, email, password} = req.body;
-            //const salt = await bcrypt.genSalt(10);
-            //const hashed = await bcrypt.hash(password, salt);
-            //const newCustomer = new Customer({customerName, fullName, email, password: hashed});
-            const newCustomer = new Customer({customerName, fullName, email, password});
+            const salt = await bcrypt.genSalt(10);
+            const hashed = await bcrypt.hash(password, salt);
+            const newCustomer = new Customer({customerName, fullName, email, password: hashed});
+            //const newCustomer = new Customer({customerName, fullName, email, password});
             const savedUser = await newCustomer.save();
           
             res.status(200).json("Customer added");
@@ -207,16 +217,16 @@ class CustomerRoutes {
     } 
 
     routes() {
-        this.router.get('/', this.getAllCustomers);
-        this.router.put('/discounts/add/:_id', this.addDiscount);
-        this.router.get('/:_id', this.getCustomerById);
-        this.router.get('/name/:customerName', this.getCustomerByName);
-        this.router.post('/', this.addCustomer);
-        this.router.post('/login', this.login);
-        this.router.put('/:_id', this.updateCustomer);
-        this.router.put('/tastes/add/:_id', this.addTaste);
-        this.router.put('/tastes/remove/:_id', this.removeTaste);
-        this.router.delete('/:_id', this.deleteCustomer);
+        this.router.get('/', [authJwt.VerifyTokenAdmin], this.getAllCustomers);
+        this.router.put('/discounts/add/:_id', [authJwt.VerifyTokenOwner], this.addDiscount);
+        this.router.get('/:_id', [authJwt.VerifyTokenCustomer], this.getCustomerById);
+        this.router.get('/name/:customerName', [authJwt.VerifyTokenCustomer], this.getCustomerByName);
+        this.router.post('/', this.addCustomer); //Anyone should be able to register to the app as a customer
+        this.router.post('/login', this.login); //Anyone should be able to login to the app as a customer
+        this.router.put('/:_id', [authJwt.VerifyTokenCustomer], this.updateCustomer);
+        this.router.put('/tastes/add/:_id', [authJwt.VerifyTokenCustomer], this.addTaste);
+        this.router.put('/tastes/remove/:_id', [authJwt.VerifyTokenCustomer], this.removeTaste);
+        this.router.delete('/:_id', [authJwt.VerifyTokenCustomer], this.deleteCustomer);
 
     }
 }
