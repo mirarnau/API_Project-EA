@@ -1,4 +1,4 @@
-version: "0.3.2"
+version: "2"
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
@@ -34,15 +34,12 @@ services:
       - VIRTUAL_HOST=ea2backoffice.soon.it
       - LETSENCRYPT_HOST=ea2backoffice.soon.it
 
-#  webApp:
-#    build: #tbd
-#    image: eduardferre/webApp-ea:latest
-#    container_name: webApp
-#    ports:
-#      - 4001:80
-#    environment:
-#      - VIRTUAL_HOST=ea2web.soon.it
-#      - LETSENCRYPT_HOST=ea2web.soon.it
+  web:
+    image: eduardferre/web-ea:latest
+    container_name: web
+    environment:
+      - VIRTUAL_HOST=appetit.soon.it
+      - LETSENCRYPT_HOST=appetit.soon.it
 
   api:
     image: eduardferre/api-ea:latest
