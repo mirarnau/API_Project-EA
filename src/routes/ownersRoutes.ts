@@ -74,20 +74,22 @@ class OwnersRoutes {
     }
 
     public async addOwner(req: Request, res: Response) : Promise<void> {
-        console.log(req.body);
         const ownerFound = await Owner.findOne({ownerName: req.body.ownerName})
         if (ownerFound != null){
             res.status(409).send("This owner already exists.")
         }
         else{
-            const {ownerName, fullName, email, password} = req.body;
+            const ownerName = req.body.ownerName;
+            const fullName = req.body.fullName;
+            const email = req.body.email;
+            const password = req.body.password;
+
             const salt = await bcrypt.genSalt(10);
             const hashed = await bcrypt.hash(password, salt);
             const newOwner = new Owner({ownerName, fullName, email, password: hashed});
+            console.log(newOwner);
             const savedOwner = await newOwner.save();
-            /*const token = jwt.sign({id: savedOwner._id, username: savedOwner.ownerName}, config.SECRET,{
-                expiresIn: 3600 //seconds
-            })*/
+
             res.status(201).send("Owner added");
         }
     }
