@@ -45,6 +45,33 @@ class OwnersRoutes {
         }
     }
     
+    public async login(req: Request, res: Response) : Promise<void> {
+        const userFound = await Owner.findOne({ownerName: req.body.ownerName});
+        const SECRET = process.env.JWT_SECRET;
+    
+        if(!userFound) {
+            res.status(400).json({message: "Invalid credentials"});
+        }
+        else {
+            const matchPassword = await bcrypt.compare(req.body.password, userFound.password);
+        
+            if(!matchPassword) {
+                res.status(401).json({token: null, message: "Invalid credentials"});
+            }
+            else {
+                const token = jwt.sign(
+                    { id: userFound._id, ownerName: userFound.ownerName, role: userFound.role }, 
+                    SECRET!, 
+                    {
+                    expiresIn: 3600
+                    }
+                );
+            
+                res.status(200).send({ token: token });
+                console.log(token);
+            }
+        }
+    }
 
     public async addOwner(req: Request, res: Response) : Promise<void> {
         const ownerFound = await Owner.findOne({ownerName: req.body.ownerName})
@@ -52,14 +79,17 @@ class OwnersRoutes {
             res.status(409).send("This owner already exists.")
         }
         else{
-            const {ownerName, fullName, email, password} = req.body;
+            const ownerName = req.body.ownerName;
+            const fullName = req.body.fullName;
+            const email = req.body.email;
+            const password = req.body.password;
+
             const salt = await bcrypt.genSalt(10);
             const hashed = await bcrypt.hash(password, salt);
             const newOwner = new Owner({ownerName, fullName, email, password: hashed});
+            console.log(newOwner);
             const savedOwner = await newOwner.save();
-            /*const token = jwt.sign({id: savedOwner._id, username: savedOwner.ownerName}, config.SECRET,{
-                expiresIn: 3600 //seconds
-            })*/
+
             res.status(201).send("Owner added");
         }
     }
@@ -90,6 +120,7 @@ class OwnersRoutes {
         this.router.get('/:_id', [authJwt.VerifyToken], this.getOwnerById);
         this.router.get('/name/:ownerName', [authJwt.VerifyToken], this.getOwnerByName);
         this.router.post('/', this.addOwner); //Anyone should be able to register to the app as an owner
+        this.router.post('/login', this.login);
         this.router.put('/:ownerName', [authJwt.VerifyTokenOwner], this.updateOwner);
         this.router.delete('/:_id', [authJwt.VerifyTokenOwner], this.deleteOwner);
     }
