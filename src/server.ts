@@ -13,6 +13,7 @@ import restaurantsRoutes from './routes/restaurantsRoutes';
 import reservationsRoutes from './routes/reservationsRoutes';
 import dishesRoutes from './routes/dishesRoutes';
 import adminRoutes from './routes/adminRoutes';
+import ticketsRoutes from './routes/ticketsRoutes';
 
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
@@ -59,6 +60,7 @@ class Server {
         this.app.use('/api/restaurants', restaurantsRoutes);
         this.app.use('/api/reservations', reservationsRoutes);
         this.app.use('/api/dishes', dishesRoutes)
+        this.app.use('/api/tickets', ticketsRoutes)
     }
 
     start() {

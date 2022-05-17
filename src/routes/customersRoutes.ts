@@ -5,6 +5,7 @@ import Restaurant from '../models/Restaurant';
 import bcrypt, { compare, hash } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import config from '../config';
+import { getSystemErrorMap } from 'util';
 
 
 class CustomerRoutes {
@@ -48,7 +49,7 @@ class CustomerRoutes {
     public async login(req: Request, res: Response) : Promise<void> {
         const userFound = await Customer.findOne({customerName: req.body.customerName});
         const SECRET = process.env.JWT_SECRET;
-    
+
         if(!userFound) {
             res.status(400).json({message: "Invalid credentials"});
         }
@@ -66,7 +67,6 @@ class CustomerRoutes {
                     expiresIn: 3600
                     }
                 );
-            
                 res.status(200).send({ token: token });
                 console.log(token);
             }
