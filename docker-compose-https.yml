@@ -44,6 +44,7 @@ services:
   api:
     image: eduardferre/api-ea:latest
     container_name: api
+    restart: always
     environment:
       - VIRTUAL_HOST=ea2api.soon.it
       - VIRTUAL_PORT=3000
