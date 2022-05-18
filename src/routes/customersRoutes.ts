@@ -79,10 +79,10 @@ class CustomerRoutes {
             res.status(409).send("This customer already exists.")
         }
         else {
-            const {customerName, fullName, email, password} = req.body;
+            const {customerName, fullName, email, password, profilePic} = req.body;
             const salt = await bcrypt.genSalt(10);
             const hashed = await bcrypt.hash(password, salt);
-            const newCustomer = new Customer({customerName, fullName, email, password: hashed});
+            const newCustomer = new Customer({customerName, fullName, email, password: hashed, profilePic});
             //const newCustomer = new Customer({customerName, fullName, email, password});
             const savedUser = await newCustomer.save();
           

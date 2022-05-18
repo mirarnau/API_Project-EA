@@ -22,7 +22,7 @@ class TicketsRoutes {
 
     //It returns ALL tickets that a creator has created, the opened and closed ones.
     public async getTicketsByCreator(req: Request, res: Response) : Promise<void> { 
-        const ticketsFound = await Ticket.findOne({creatorName: req.params.creatorName});
+        const ticketsFound = await Ticket.find({creatorName: req.params.creatorName});
         if(ticketsFound == null){
             res.status(404).send("The user has not created any ticket ");
         }
@@ -33,7 +33,7 @@ class TicketsRoutes {
 
     //It returns the tickets that the recipient has received, both opened and closed.
     public async getTicketsByRecipient(req: Request, res: Response) : Promise<void> { 
-        const ticketsFound = await Ticket.findOne({recipientName: req.params.recipientName});
+        const ticketsFound = await Ticket.find({recipientName: req.params.recipientName});
         if(ticketsFound == null){
             res.status(404).send("The user has not received any ticket.");
         }
@@ -44,8 +44,8 @@ class TicketsRoutes {
 
     //Adds a ticket to the system with default value of status set to false (opened ticket)
     public async addTicket(req: Request, res: Response) : Promise<void> {
-        const {creatorName, recipientName, subject, message} = req.body;
-        const newTicket = new Ticket({creatorName, recipientName, subject, message});
+        const {creatorName, recipientName, subject, message, profilePicCreator} = req.body;
+        const newTicket = new Ticket({creatorName, recipientName, subject, message, profilePicCreator});
         await newTicket.save();
         res.status(201).send('Ticket added.');
         
