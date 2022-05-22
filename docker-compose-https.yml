@@ -1,0 +1,54 @@
+version: "2"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/nginx/certs
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+
+  acme-companion:
+    image: nginxproxy/acme-companion
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/acme.sh
+    volumes_from:
+      - nginx-proxy:rw
+    environment:
+      - DEFAULT_EMAIL=eduard.ferre.sanchez@estudiantat.upc.edu
+
+#  mongo:
+#    image: mongo:latest
+#    container_name: mongodb
+#    volumes:
+#      - mongodbData:/data/db
+
+  backoffice:
+    image: eduardferre/backoffice-ea:latest
+    container_name: backoffice
+    environment:
+      - VIRTUAL_HOST=ea2backoffice.soon.it
+      - LETSENCRYPT_HOST=ea2backoffice.soon.it
+
+  web:
+    image: eduardferre/web-ea:latest
+    container_name: web
+    environment:
+      - VIRTUAL_HOST=appetit.soon.it
+      - LETSENCRYPT_HOST=appetit.soon.it
+
+  api:
+    image: eduardferre/api-ea:latest
+    container_name: api
+    restart: always
+    environment:
+      - VIRTUAL_HOST=ea2api.soon.it
+      - VIRTUAL_PORT=3000
+      - LETSENCRYPT_HOST=ea2api.soon.it
+
+#volumes:
+#  mongodbData:
