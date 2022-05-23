@@ -80,6 +80,7 @@ class OwnersRoutes {
         }
         else{
             const ownerName = req.body.ownerName;
+            console.log('Owner Name:' ,ownerName);
             const fullName = req.body.fullName;
             const email = req.body.email;
             const password = req.body.password;
@@ -87,7 +88,6 @@ class OwnersRoutes {
             const salt = await bcrypt.genSalt(10);
             const hashed = await bcrypt.hash(password, salt);
             const newOwner = new Owner({ownerName, fullName, email, password: hashed});
-            console.log(newOwner);
             const savedOwner = await newOwner.save();
 
             res.status(201).send("Owner added");
