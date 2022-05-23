@@ -13,7 +13,7 @@ class TicketsRoutes {
 
     //It returns all tickets in the system (from every creator)
     public async getAllTickets(req: Request, res: Response) : Promise<void> { 
-        const allTickets = await Ticket.find();
+        const allTickets = await Ticket.find().populate('messages');
         if (allTickets.length == 0){
             res.status(404).send("There are no tickets yet.")
         }
@@ -49,7 +49,7 @@ class TicketsRoutes {
         const {creatorName, recipientName, subject} = req.body;
         const newTicket = new Ticket({creatorName, recipientName, subject});
         await newTicket.save();
-        res.status(201).send('Ticket added.');
+        res.status(201).send(newTicket);
         
     }
 
@@ -90,9 +90,15 @@ class TicketsRoutes {
         res.status(201).send('Message added to ticket.');
     }
 
+    public async getAllMessagesTicket(req: Request, res: Response) : Promise<void> {
+        const ticket = await Ticket.findById({_id: req.params._id}).populate('messages');
+        res.status(200).send(ticket.messages);
+    }
+
     routes() {
 
         this.router.get('/', [authJwt.VerifyToken], this.getAllTickets);
+        this.router.get('/messages/:_id', [authJwt.VerifyToken], this.getAllMessagesTicket);
         this.router.get('/creator/:creatorName', [authJwt.VerifyToken], this.getTicketsByCreator);
         this.router.get('/recipient/:recipientName', [authJwt.VerifyToken], this.getTicketsByRecipient);
         this.router.post('/', [authJwt.VerifyToken], this.addTicket);
