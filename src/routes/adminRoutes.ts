@@ -27,11 +27,7 @@ class AdminRoutes {
         res.status(401).json({ token: null, message: 'Invalid AdminName and/or Password' })
       } else {
         const token = jwt.sign(
-          { id: adminFound._id, adminName: adminFound.adminName, role: adminFound.role },
-                SECRET!,
-                {
-                  expiresIn: 3600
-                }
+          { id: adminFound._id, adminName: adminFound.adminName, role: adminFound.role }, SECRET!, { expiresIn: 3600 }
         )
 
         res.status(200).send({ token })

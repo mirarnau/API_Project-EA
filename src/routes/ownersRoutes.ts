@@ -55,11 +55,7 @@ class OwnersRoutes {
         res.status(401).json({ token: null, message: 'Invalid credentials' })
       } else {
         const token = jwt.sign(
-          { id: userFound._id, ownerName: userFound.ownerName, role: userFound.role },
-                    SECRET!,
-                    {
-                      expiresIn: 3600
-                    }
+          { id: userFound._id, ownerName: userFound.ownerName, role: userFound.role }, SECRET!, { expiresIn: 3600 }
         )
 
         res.status(200).send({ token })
