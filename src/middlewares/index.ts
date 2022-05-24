@@ -1,3 +1,3 @@
 import * as authJwt from './authJwt'
 
-export {authJwt};
+export { authJwt }
