@@ -31,8 +31,6 @@ export const VerifyToken = async (req: Request, res: Response, next: NextFunctio
       return
     }
 
-    console.log(decoded!)
-
     let user = await Customer.findOne({ _id: decoded!.id, disabled: false })
     if (!user) user = await Owner.findOne({ _id: decoded!.id, disabled: false })
     if (!user) user = await Admin.findOne({ _id: decoded!.id, disabled: false })
@@ -70,8 +68,6 @@ export const VerifyTokenCustomer = async (req: Request, res: Response, next: Nex
       res.status(403).send({ message: 'Invalid token' })
       return
     }
-
-    console.log(decoded!)
 
     let user = await Customer.findOne({ _id: decoded!.id, disabled: false })
     if (!user) user = await Admin.findOne({ _id: decoded!.id, disabled: false })
@@ -117,8 +113,6 @@ export const VerifyTokenOwner = async (req: Request, res: Response, next: NextFu
       return
     }
 
-    console.log(decoded!)
-
     let user = await Owner.findOne({ _id: decoded!.id, disabled: false })
     if (!user) user = await Admin.findOne({ _id: decoded!.id, disabled: false })
 
@@ -162,8 +156,6 @@ export const VerifyTokenAdmin = async (req: Request, res: Response, next: NextFu
       res.status(403).send({ message: 'Invalid token' })
       return
     }
-
-    console.log(decoded!)
 
     const user = await Admin.findOne({ _id: decoded!.id, disabled: false })
 

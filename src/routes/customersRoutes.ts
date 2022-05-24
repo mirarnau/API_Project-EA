@@ -58,7 +58,6 @@ class CustomerRoutes {
           { id: userFound._id, customerName: userFound.customerName, role: userFound.role }, SECRET!, { expiresIn: 3600 }
         )
         res.status(200).send({ token })
-        console.log(token)
       }
     }
   }

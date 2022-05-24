@@ -59,7 +59,6 @@ class OwnersRoutes {
         )
 
         res.status(200).send({ token })
-        console.log(token)
       }
     }
   }
@@ -70,7 +69,6 @@ class OwnersRoutes {
       res.status(409).send('This owner already exists.')
     } else {
       const { ownerName } = req.body
-      console.log('Owner Name:', ownerName)
       const { fullName } = req.body
       const { email } = req.body
       const { password } = req.body

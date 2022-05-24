@@ -15,7 +15,6 @@ class RestaurantsRoutes {
   }
 
   public async getAllRestaurants (req: Request, res: Response) : Promise<void> { // It returns a void, but internally it's a promise.
-    // console.log(req.header.toString.token);
     const allRestaurants = await Restaurant.find()
     if (allRestaurants.length === 0) {
       res.status(404).send('There are no restaurants yet.')
@@ -87,7 +86,6 @@ class RestaurantsRoutes {
 
   public async filterRestaurants (req:Request, res: Response) : Promise<void> {
     const listTastesCustomer = req.body.tags
-    console.log(req.body)
     if (listTastesCustomer.length === 0) {
       res.status(200).send(await Restaurant.find())
     } else {
@@ -97,8 +95,6 @@ class RestaurantsRoutes {
         let tagsMatches = 0
         for (let i = 0; i < tagsList.length; i++) {
           const tagsRestaurant = restaurant.listTags.map((tag) => tag.tagName)
-          console.log(tagsList[i])
-          console.log(tagsRestaurant)
           if (tagsRestaurant.includes(tagsList[i])) {
             tagsMatches++
             if (tagsMatches === tagsList.length) {

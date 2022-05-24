@@ -31,7 +31,6 @@ class AdminRoutes {
         )
 
         res.status(200).send({ token })
-        console.log(token)
       }
     }
   }
