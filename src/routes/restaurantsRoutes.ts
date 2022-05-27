@@ -54,12 +54,13 @@ class RestaurantsRoutes {
       return
     }
     const {
-      owner, restaurantName, email, address, city, description, photos, listTags
+      owner, restaurantName, email, address, city, description, photos, listTags, location
     } = req.body
     const newRestaurant = new Restaurant({
-      owner, restaurantName, email, address, city, description, photos, listTags, rating: 0
+      owner, restaurantName, email, address, city, description, photos, listTags, rating: 0, location
     })
     let newRestaurantID
+
     await newRestaurant.save().then((restaurant) => {
       newRestaurantID = restaurant._id.toString()
     })
@@ -133,15 +134,37 @@ class RestaurantsRoutes {
     }
   }
 
+  // It returns the near restarants ordered by proximity.
+  public async getRestaurantsFromDistance (req: Request, res:Response) : Promise <void> {
+    const restaurantsFound = await Restaurant.find(
+      {
+        location: {
+          $nearSphere: {
+            $geometry: {
+              type: 'Point',
+              coordinates: [req.body.longitude, req.body.latitude]
+            },
+            $maxDistance: req.body.maxDistance
+          }
+        }
+      })
+    if (restaurantsFound == null) {
+      res.status(404).send('No restaurant found within the specified distance.')
+    } else {
+      res.status(200).send(restaurantsFound)
+    }
+  }
+
   routes () {
     this.router.get('/', [authJwt.VerifyToken], this.getAllRestaurants)
     this.router.get('/:_id', [authJwt.VerifyToken], this.getRestaurantById)
     this.router.get('/name/:restaurantName', [authJwt.VerifyToken], this.getRestaurantByName)
     this.router.post('/filters/tags', [authJwt.VerifyToken], this.filterRestaurants)
     this.router.get('/filters/rating', [authJwt.VerifyToken], this.sortByRating)
-    this.router.post('/', [authJwt.VerifyTokenOwner], this.addRestaurant)
+    this.router.post('/', [authJwt.VerifyToken], this.addRestaurant) // IT HAS TO VE VERIFY TOKEN OWNER !!!!!
     this.router.put('/:_id', [authJwt.VerifyTokenOwner], this.updateRestaurant)
-    this.router.delete('/:_id', [authJwt.VerifyTokenOwner], this.deleteRestaurant)
+    this.router.delete('/:_id', [authJwt.VerifyToken], this.deleteRestaurant) // IT HAS TO BE VERIFY TOKEN OWNER !!!!!
+    this.router.get('/geo/nearsphere', [authJwt.VerifyToken], this.getRestaurantsFromDistance)
   }
 }
 const restaurantsRoutes = new RestaurantsRoutes()

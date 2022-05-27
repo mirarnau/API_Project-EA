@@ -1,5 +1,16 @@
 import mongoose, { Schema, model } from 'mongoose'
 
+const GeoJSON = new Schema({
+  type: {
+    type: String,
+    enum: ['Point']
+  },
+  coordinates: {
+    type: [Number],
+    index: true
+  }
+})
+
 const RestaurantSchema = new Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'Owner' }, // The _id of the owner.
   restaurantName: { type: String, required: true, unique: true },
@@ -13,7 +24,11 @@ const RestaurantSchema = new Schema({
   listTags: [{
     tagName: { type: String }
   }],
-  listDishes: [] // Array containing the IDs of the menus.
+  listDishes: [], // Array containing the IDs of the menus.
+  location: GeoJSON
 })
+
+RestaurantSchema.index({ location: '2dsphere' })
+RestaurantSchema.index({ geometry: '2dsphere' })
 
 export default model('Restaurant', RestaurantSchema)

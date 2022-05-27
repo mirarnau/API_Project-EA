@@ -28,15 +28,19 @@ class Server {
     this.routes()
   }
 
-  config () {
+  connectDB () {
     // MongoDB settings
     let DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/EA-PROJECT'
 
     DB_URL = DB_URL.replace('user', process.env.DB_USER!)
     DB_URL = DB_URL.replace('password', process.env.DB_PASSWORD!)
 
-    mongoose.connect(DB_URL).then((db) => console.log('DB is connected'))
+    mongoose.connect(DB_URL).then((db) => {
+      return console.log('DB is connected')
+    })
+  }
 
+  config () {
     // Settings
     this.app.set('port', process.env.PORT || 3000)
 
@@ -68,4 +72,5 @@ class Server {
 }
 
 const server = new Server()
+module.exports = server.connectDB()
 server.start()
