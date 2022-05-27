@@ -55,15 +55,10 @@ class OwnersRoutes {
         res.status(401).json({ token: null, message: 'Invalid credentials' })
       } else {
         const token = jwt.sign(
-          { id: userFound._id, ownerName: userFound.ownerName, role: userFound.role },
-                    SECRET!,
-                    {
-                      expiresIn: 3600
-                    }
+          { id: userFound._id, ownerName: userFound.ownerName, role: userFound.role }, SECRET!, { expiresIn: 3600 }
         )
 
         res.status(200).send({ token })
-        console.log(token)
       }
     }
   }
@@ -74,7 +69,6 @@ class OwnersRoutes {
       res.status(409).send('This owner already exists.')
     } else {
       const { ownerName } = req.body
-      console.log('Owner Name:', ownerName)
       const { fullName } = req.body
       const { email } = req.body
       const { password } = req.body

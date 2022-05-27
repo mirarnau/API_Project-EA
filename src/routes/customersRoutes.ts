@@ -55,14 +55,9 @@ class CustomerRoutes {
         res.status(401).json({ token: null, message: 'Invalid credentials' })
       } else {
         const token = jwt.sign(
-          { id: userFound._id, customerName: userFound.customerName, role: userFound.role },
-                    SECRET!,
-                    {
-                      expiresIn: 3600
-                    }
+          { id: userFound._id, customerName: userFound.customerName, role: userFound.role }, SECRET!, { expiresIn: 3600 }
         )
         res.status(200).send({ token })
-        console.log(token)
       }
     }
   }
