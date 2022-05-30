@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import compression from 'compression'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import Server from 'socket.io'
 
 import indexRoutes from './routes/indexRoutes'
 import customersRoutes from './routes/customersRoutes'
@@ -18,7 +19,7 @@ import ticketsRoutes from './routes/ticketsRoutes'
 dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` })
 dotenv.config({ path: '.env.secret' })
 
-class Server {
+class Service {
   public app: express.Application
 
   // The contructor will be the first code that is executed when an instance of the class is declared.
@@ -65,12 +66,34 @@ class Server {
   }
 
   start () {
-    this.app.listen(this.app.get('port'), () => {
+    const server = this.app.listen(this.app.get('port'), () => {
       console.log('Server listening on port', this.app.get('port'))
+    })
+    const io = new Server(server)
+
+    io.on('connection', function (client: any) {
+      console.log('Connected...', client.id)
+
+      // listens for new messages coming in
+      client.on('message', function name (data: any) {
+        console.log(data)
+        io.emit('message', data)
+      })
+
+      // listens when a user is disconnected from the server
+      client.on('disconnect', function () {
+        console.log('Disconnected...', client.id)
+      })
+
+      // listens when there's an error detected and logs the error on the console
+      client.on('error', function (err: any) {
+        console.log('Error detected', client.id)
+        console.log(err)
+      })
     })
   }
 }
 
-const server = new Server()
-module.exports = server.connectDB()
-server.start()
+const service = new Service()
+module.exports = service.connectDB()
+service.start()
