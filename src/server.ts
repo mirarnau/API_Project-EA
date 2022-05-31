@@ -19,7 +19,7 @@ import ticketsRoutes from './routes/ticketsRoutes'
 dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` })
 dotenv.config({ path: '.env.secret' })
 
-class Service {
+class ApiServer {
   public app: express.Application
 
   // The contructor will be the first code that is executed when an instance of the class is declared.
@@ -72,20 +72,17 @@ class Service {
     const io = new Server(server)
 
     io.on('connection', function (client: any) {
-      console.log('Connected...', client.id)
+      console.log('Socket connected...', client.id)
 
-      // listens for new messages coming in
       client.on('message', function name (data: any) {
         console.log(data)
         io.emit('message', data)
       })
 
-      // listens when a user is disconnected from the server
       client.on('disconnect', function () {
         console.log('Disconnected...', client.id)
       })
 
-      // listens when there's an error detected and logs the error on the console
       client.on('error', function (err: any) {
         console.log('Error detected', client.id)
         console.log(err)
@@ -94,6 +91,6 @@ class Service {
   }
 }
 
-const service = new Service()
-module.exports = service.connectDB()
-service.start()
+const server = new ApiServer()
+module.exports = server.connectDB()
+server.start()
