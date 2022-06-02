@@ -28,7 +28,7 @@ const RestaurantSchema = new Schema({
   location: GeoJSON
 })
 
-RestaurantSchema.index({ location: '2dsphere' })
-RestaurantSchema.index({ geometry: '2dsphere' })
+// RestaurantSchema.index({ location: '2dsphere' })
+// RestaurantSchema.index({ geometry: '2dsphere' })
 
 export default model('Restaurant', RestaurantSchema)
