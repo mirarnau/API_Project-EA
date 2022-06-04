@@ -14,6 +14,8 @@ import reservationsRoutes from './routes/reservationsRoutes'
 import dishesRoutes from './routes/dishesRoutes'
 import adminRoutes from './routes/adminRoutes'
 import ticketsRoutes from './routes/ticketsRoutes'
+import customersRoutesDeactivated from './routes/customersRoutesDeactivated'
+import ownersRoutesDeactivated from './routes/ownersRoutesDeactivated'
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` })
 dotenv.config({ path: '.env.secret' })
@@ -56,8 +58,10 @@ class Server {
   routes () {
     this.app.use(indexRoutes)
     this.app.use('/api/customers', customersRoutes)
+    this.app.use('/api/customers_deactivated', customersRoutesDeactivated)
     this.app.use('/api/admins', adminRoutes)
     this.app.use('/api/owners', ownersRoutes)
+    this.app.use('/api/owners_deactivated', ownersRoutesDeactivated)
     this.app.use('/api/restaurants', restaurantsRoutes)
     this.app.use('/api/reservations', reservationsRoutes)
     this.app.use('/api/dishes', dishesRoutes)
