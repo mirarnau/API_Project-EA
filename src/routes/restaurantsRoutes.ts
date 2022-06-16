@@ -164,7 +164,7 @@ class RestaurantsRoutes {
     this.router.get('/', this.getAllRestaurants)
     this.router.get('/:_id', [authJwt.VerifyToken], this.getRestaurantById)
     this.router.get('/name/:restaurantName', [authJwt.VerifyToken], this.getRestaurantByName)
-    this.router.get('/owner/:owner', this.getRestaurantsByOwner)
+    this.router.get('/owner/:owner', [authJwt.VerifyToken], this.getRestaurantsByOwner)
     this.router.post('/filters/tags', [authJwt.VerifyToken], this.filterRestaurants)
     this.router.get('/filters/rating', [authJwt.VerifyToken], this.sortByRating)
     this.router.post('/', [authJwt.VerifyToken], this.addRestaurant) // IT HAS TO VE VERIFY TOKEN OWNER !!!!!
