@@ -168,7 +168,7 @@ class RestaurantsRoutes {
     this.router.post('/filters/tags', [authJwt.VerifyToken], this.filterRestaurants)
     this.router.get('/filters/rating', [authJwt.VerifyToken], this.sortByRating)
     this.router.post('/', [authJwt.VerifyToken], this.addRestaurant) // IT HAS TO VE VERIFY TOKEN OWNER !!!!!
-    this.router.put('/:_id', [authJwt.VerifyTokenOwner], this.updateRestaurant)
+    this.router.put('/:_id', [authJwt.VerifyToken], this.updateRestaurant)
     this.router.delete('/:_id', [authJwt.VerifyToken], this.deleteRestaurant) // IT HAS TO BE VERIFY TOKEN OWNER !!!!!
     this.router.get('/geo/nearsphere', [authJwt.VerifyToken], this.getRestaurantsFromDistance)
   }

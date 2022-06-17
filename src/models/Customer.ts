@@ -7,6 +7,10 @@ const CustomerSchema = new Schema({
   password: { type: String, required: true },
   creationDate: { type: Date, default: Date.now },
   profilePic: { type: String },
+  ratingLog: [{
+    restaurant: { type: String },
+    rating: { type: Number }
+  }],
   listTastes: [{
     tagName: { type: String },
     relevance: { type: Number } // This value will be dynamically updated with the user activity.
