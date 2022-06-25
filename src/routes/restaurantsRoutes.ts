@@ -41,6 +41,15 @@ class RestaurantsRoutes {
     }
   }
 
+  public async getRestaurantsByOwner (req: Request, res: Response) : Promise<void> {
+    const ownerRestaurants = await Restaurant.find({ owner: req.params.owner })
+    if (ownerRestaurants.length === 0) {
+      res.status(404).send('The owner has no restaurants.')
+    } else {
+      res.status(200).send(ownerRestaurants)
+    }
+  }
+
   public async addRestaurant (req: Request, res: Response) : Promise<void> {
     const restaurantFound = await Restaurant.findOne({ restaurantName: req.body.restaurantName })
     if (restaurantFound != null) {
@@ -68,8 +77,8 @@ class RestaurantsRoutes {
   }
 
   public async updateRestaurant (req: Request, res: Response) : Promise<void> {
-    const customerToUpdate = await Restaurant.findByIdAndUpdate(req.params._id, req.body)
-    if (customerToUpdate == null) {
+    const restaurantToUpdate = await Restaurant.findByIdAndUpdate(req.params._id, req.body)
+    if (restaurantToUpdate == null) {
       res.status(404).send('Restaurant not found.')
     } else {
       res.status(201).send('Restaurant updated.')
@@ -152,13 +161,14 @@ class RestaurantsRoutes {
   }
 
   routes () {
-    this.router.get('/', [authJwt.VerifyToken], this.getAllRestaurants)
+    this.router.get('/', this.getAllRestaurants)
     this.router.get('/:_id', [authJwt.VerifyToken], this.getRestaurantById)
     this.router.get('/name/:restaurantName', [authJwt.VerifyToken], this.getRestaurantByName)
+    this.router.get('/owner/:owner', [authJwt.VerifyToken], this.getRestaurantsByOwner)
     this.router.post('/filters/tags', [authJwt.VerifyToken], this.filterRestaurants)
     this.router.get('/filters/rating', [authJwt.VerifyToken], this.sortByRating)
     this.router.post('/', [authJwt.VerifyToken], this.addRestaurant) // IT HAS TO VE VERIFY TOKEN OWNER !!!!!
-    this.router.put('/:_id', [authJwt.VerifyTokenOwner], this.updateRestaurant)
+    this.router.put('/:_id', [authJwt.VerifyToken], this.updateRestaurant)
     this.router.delete('/:_id', [authJwt.VerifyToken], this.deleteRestaurant) // IT HAS TO BE VERIFY TOKEN OWNER !!!!!
     this.router.get('/geo/nearsphere', [authJwt.VerifyToken], this.getRestaurantsFromDistance)
   }
