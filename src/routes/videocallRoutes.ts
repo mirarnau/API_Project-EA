@@ -5,7 +5,6 @@ import agora from 'agora-access-token'
 import dotenv from 'dotenv'; const { RtcTokenBuilder, RtcRole } = agora
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` })
-dotenv.config({ path: '.env.secret' })
 const appID = process.env.APP_ID || ''
 const appCertificate = process.env.APP_CERTIFICATE || ''
 const role = RtcRole.PUBLISHER
@@ -23,9 +22,10 @@ class VideocallRoutes {
 
     public async getAgoraToken (req: Request, res: Response) : Promise<void> {
         const { channelName } = req.params
-        const token = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, 0, role, privilegeExpiredTs)
-        res.status(200).send({ rtcToken: token })
-        console.log(token)
+        console.log(channelName)
+        const tokenAg = RtcTokenBuilder.buildTokenWithUid(appID, appCertificate, channelName, 0, role, privilegeExpiredTs)
+        res.status(200).send({ rtcToken: tokenAg })
+        console.log(tokenAg)
     }
 
     routes () {
