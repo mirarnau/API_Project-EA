@@ -16,11 +16,8 @@ import adminRoutes from './routes/adminRoutes'
 import ticketsRoutes from './routes/ticketsRoutes'
 import customersRoutesDeactivated from './routes/customersRoutesDeactivated'
 import ownersRoutesDeactivated from './routes/ownersRoutesDeactivated'
-<<<<<<< HEAD
 import postsRoutes from './routes/postsRoutes'
-=======
 import videocallRoutes from './routes/videocallRoutes'
->>>>>>> 3c15a9517e2bb1d0b4e877c6dff2dc29a7a377d8
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || 'development'}` })
 dotenv.config({ path: '.env.secret' })
@@ -71,11 +68,8 @@ class Server {
     this.app.use('/api/reservations', reservationsRoutes)
     this.app.use('/api/dishes', dishesRoutes)
     this.app.use('/api/tickets', ticketsRoutes)
-<<<<<<< HEAD
     this.app.use('/api/posts', postsRoutes)
-=======
     this.app.use('/api/videocall', videocallRoutes)
->>>>>>> 3c15a9517e2bb1d0b4e877c6dff2dc29a7a377d8
   }
 
   start () {
