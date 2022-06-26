@@ -1,6 +1,8 @@
+/* eslint-disable dot-notation */
 import {
   Request, Response, Router
 } from 'express'
+import mongoose from 'mongoose'
 import { authJwt } from '../middlewares'
 import Dish from '../models/Dish'
 import Restaurant from '../models/Restaurant'
@@ -65,7 +67,8 @@ class DishesRoutes {
 
   public async deleteDish (req: Request, res: Response) : Promise<void> {
     const dishToDelete = await Dish.findById(req.params._id)
-    const restaurant = await Restaurant.findById(dishToDelete.restaurant._id)
+    const id: mongoose.Types.ObjectId = dishToDelete.restaurant['_id']
+    const restaurant = await Restaurant.findById(id)
     const dishesUpdated = restaurant.listDishes
     if (dishToDelete == null) {
       res.status(404).send('Dish not found.')
@@ -79,7 +82,7 @@ class DishesRoutes {
       if (restaurant.listDishes[i]._id === req.params._id) {
         dishesUpdated.splice(i, 1)
         await Dish.findByIdAndRemove(req.params._id)
-        await Restaurant.findByIdAndUpdate({ _id: dishToDelete.restaurant._id }, { listDishes: dishesUpdated })
+        await Restaurant.findByIdAndUpdate({ _id: dishToDelete.restaurant['_id'] }, { listDishes: dishesUpdated })
         res.status(200).send('Dish deleted and restaurant updated.')
         return
       }

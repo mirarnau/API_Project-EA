@@ -84,7 +84,7 @@ class TicketsRoutes {
 
     let newMessageID: mongoose.Types.ObjectId
     await newMessage.save().then((message) => {
-      newMessageID = message._id.toString()
+      newMessageID = message._id
       ticket.messages.push(newMessageID)
     })
 

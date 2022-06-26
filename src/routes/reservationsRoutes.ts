@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import {
   Request, Response, Router
 } from 'express'
@@ -55,11 +56,11 @@ class ReservationsRoutes {
       return
     }
     // eslint-disable-next-line no-var
-    var listReservationsCustomer: mongoose.Types.ObjectId []
+    var listReservationsCustomer: any []
     listReservationsCustomer = customer.listReservations
     let newReservationID: mongoose.Types.ObjectId
     await newReservation.save().then((reservation) => {
-      newReservationID = reservation._id.toString()
+      newReservationID = reservation._id
       listReservationsCustomer.push(newReservationID)
     })
     await Customer.findByIdAndUpdate({ _id: _idCustomer }, { listReservations: listReservationsCustomer })
@@ -87,7 +88,7 @@ class ReservationsRoutes {
 
     const listReservationsCustomer = customer.listReservations
     for (let i = 0; i < listReservationsCustomer.length; i++) {
-      if (listReservationsCustomer[i]._id === reservation._id) {
+      if (listReservationsCustomer[i]['_id'] === reservation['_id']) {
         listReservationsCustomer.splice(i, 1)
       }
     }

@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /* eslint-disable array-callback-return */
 import {
   Request, Response, Router
@@ -104,7 +105,7 @@ class RestaurantsRoutes {
       const filteredResutaurants = allRestaurants.filter((restaurant) => {
         let tagsMatches = 0
         for (let i = 0; i < tagsList.length; i++) {
-          const tagsRestaurant = restaurant.listTags.map((tag) => tag.tagName)
+          const tagsRestaurant = restaurant.listTags.map((tag) => tag['tagName'])
           if (tagsRestaurant.includes(tagsList[i])) {
             tagsMatches++
             if (tagsMatches === tagsList.length) {
