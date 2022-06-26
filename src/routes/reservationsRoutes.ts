@@ -26,7 +26,7 @@ class ReservationsRoutes {
   }
 
   public async getReservationById (req: Request, res: Response) : Promise<void> {
-    const ownerFound = await Reservation.findById(req.params._id).populate('_idCustomer _idRestaurant')
+    const ownerFound = await Reservation.findById(req.params._id).populate('_idCustomer ')
     if (ownerFound == null) {
       res.status(404).send('Reservation not found.')
     } else {
@@ -35,25 +35,27 @@ class ReservationsRoutes {
   }
 
   public async addReservation (req: Request, res: Response) : Promise<void> {
-    const reservationFound = await Reservation.findOne({ _idCustomer: req.body._idCustomer, _idRestaurant: req.body._idRestaurant, dateReservation: req.body.dateReservation })
+    const reservationFound = await Reservation.findOne({ _idCustomer: req.body._idCustomer, timeReservation: req.body.timeReservation })
     if (reservationFound != null) {
       res.status(409).send('This reservation already exists.')
       return
     }
 
     const {
-      _idCustomer, _idRestaurant, dateReservation, timeReservation
+      _idCustomer, dateReservation, timeReservation, nameRestaurant
     } = req.body
     const newReservation = new Reservation({
-      _idCustomer, _idRestaurant, dateReservation, timeReservation
+      _idCustomer, dateReservation, timeReservation, nameRestaurant
     })
 
     const customer = await Customer.findById(_idCustomer)
+    /*
     const restaurant = await Restaurant.findById(_idRestaurant)
+
     if ((customer == null) || (restaurant == null)) {
       res.status(404).send('Customer or Restaurant not found.')
       return
-    }
+    } */
     // eslint-disable-next-line no-var
     var listReservationsCustomer: mongoose.Types.ObjectId []
     listReservationsCustomer = customer.listReservations
