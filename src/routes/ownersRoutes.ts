@@ -84,11 +84,16 @@ class OwnersRoutes {
   }
 
   public async updateOwner (req: Request, res: Response) : Promise<void> {
-    const ownerToUpdate = await Owner.findByIdAndUpdate(req.params._id, req.body)
-    if (ownerToUpdate == null) {
-      res.status(404).send('Owner not found.')
+    const ownerFound = await Owner.findOne({ ownerName: req.body.ownerName })
+    if (ownerFound != null) {
+      res.status(409).send('This owner already exists.')
     } else {
-      res.status(201).send('Owner updated.')
+      const ownerToUpdate = await Owner.findByIdAndUpdate(req.params._id, req.body)
+      if (ownerToUpdate == null) {
+        res.status(404).send('Owner not found.')
+      } else {
+        res.status(201).send('Owner updated.')
+      }
     }
   }
 

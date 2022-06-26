@@ -84,11 +84,16 @@ class CustomerRoutes {
   }
 
   public async updateCustomer (req: Request, res: Response) : Promise<void> {
-    const customerToUpdate = await Customer.findByIdAndUpdate(req.params._id, req.body)
-    if (customerToUpdate == null) {
-      res.status(404).send('Customer not found.')
+    const customerFound = await Customer.findOne({ customerName: req.body.customerName })
+    if (customerFound != null) {
+      res.status(409).send('This customer already exists.')
     } else {
-      res.status(201).send('Customer updated.')
+      const customerToUpdate = await Customer.findByIdAndUpdate(req.params._id, req.body)
+      if (customerToUpdate == null) {
+        res.status(404).send('Customer not found.')
+      } else {
+        res.status(201).send('Customer updated.')
+      }
     }
   }
 
