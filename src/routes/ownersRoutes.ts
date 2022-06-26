@@ -68,28 +68,32 @@ class OwnersRoutes {
     if (ownerFound != null) {
       res.status(409).send('This owner already exists.')
     } else {
-      const { ownerName } = req.body
-      const { fullName } = req.body
-      const { email } = req.body
-      const { password } = req.body
+      const {
+        ownerName, fullName, email, password, profilePic
+      } = req.body
 
       const salt = await bcrypt.genSalt(10)
       const hashed = await bcrypt.hash(password, salt)
       const newOwner = new Owner({
-        ownerName, fullName, email, password: hashed
+        ownerName, fullName, email, password: hashed, profilePic
       })
       await newOwner.save()
 
-      res.status(201).send('Owner added')
+      res.status(200).send('Owner added')
     }
   }
 
   public async updateOwner (req: Request, res: Response) : Promise<void> {
-    const ownerToUpdate = await Owner.findOneAndUpdate({ ownerName: req.params.ownerName }, req.body)
-    if (ownerToUpdate == null) {
-      res.status(404).send('Owner not found.')
+    const ownerFound = await Owner.findOne({ ownerName: req.body.ownerName })
+    if (ownerFound != null) {
+      res.status(409).send('This owner already exists.')
     } else {
-      res.status(201).send('Owner updated.')
+      const ownerToUpdate = await Owner.findByIdAndUpdate(req.params._id, req.body)
+      if (ownerToUpdate == null) {
+        res.status(404).send('Owner not found.')
+      } else {
+        res.status(201).send('Owner updated.')
+      }
     }
   }
 
@@ -108,7 +112,7 @@ class OwnersRoutes {
     this.router.get('/name/:ownerName', [authJwt.VerifyToken], this.getOwnerByName)
     this.router.post('/', this.addOwner) // Anyone should be able to register to the app as an owner
     this.router.post('/login', this.login)
-    this.router.put('/:ownerName', [authJwt.VerifyTokenOwner], this.updateOwner)
+    this.router.put('/:_id', [authJwt.VerifyTokenOwner], this.updateOwner)
     this.router.delete('/:_id', [authJwt.VerifyTokenOwner], this.deleteOwner)
   }
 }

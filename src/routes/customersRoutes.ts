@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import {
   Request, Response, Router
 } from 'express'
@@ -83,11 +84,16 @@ class CustomerRoutes {
   }
 
   public async updateCustomer (req: Request, res: Response) : Promise<void> {
-    const customerToUpdate = await Customer.findByIdAndUpdate(req.params._id, req.body)
-    if (customerToUpdate == null) {
-      res.status(404).send('Customer not found.')
+    const customerFound = await Customer.findOne({ customerName: req.body.customerName })
+    if (customerFound != null) {
+      res.status(409).send('This customer already exists.')
     } else {
-      res.status(201).send('Customer updated.')
+      const customerToUpdate = await Customer.findByIdAndUpdate(req.params._id, req.body)
+      if (customerToUpdate == null) {
+        res.status(404).send('Customer not found.')
+      } else {
+        res.status(201).send('Customer updated.')
+      }
     }
   }
 
@@ -107,9 +113,9 @@ class CustomerRoutes {
       let found = 0
       const discount = discountsBody[i]
       for (let u = 0; u < customer.listDiscounts.length; u++) {
-        if ((customer.listDiscounts[u].nameRestaurant === discount.nameRestaurant) &&
-                (customer.listDiscounts[u].amount === discount.amount) &&
-                (customer.listDiscounts[u].expirationDate === discount.expirationDate)) {
+        if ((customer.listDiscounts[u]['nameRestaurant'] === discount['nameRestaurant']) &&
+                (customer.listDiscounts[u]['amount'] === discount['amount']) &&
+                (customer.listDiscounts[u]['expirationDate'] === discount['expirationDate'])) {
           found = 1
         }
       }
@@ -134,9 +140,9 @@ class CustomerRoutes {
     const listDiscountsCustomer = customer.listDiscounts
     let found = 0
     for (let i = 0; i < listDiscountsCustomer.length; i++) {
-      if ((listDiscountsCustomer[i].nameRestaurant === req.body.nameRestaurant) &&
-            (listDiscountsCustomer[i].amount === req.body.amount) &&
-            (listDiscountsCustomer[i].timeReservation === req.body.timeReservation)) {
+      if ((listDiscountsCustomer[i]['nameRestaurant'] === req.body['nameRestaurant']) &&
+            (listDiscountsCustomer[i]['amount'] === req.body['amount']) &&
+            (listDiscountsCustomer[i]['timeReservation'] === req.body['timeReservation'])) {
         listDiscountsCustomer.splice(i, 1)
         found = 1
       }
@@ -157,8 +163,8 @@ class CustomerRoutes {
       return
     }
     // Customer.findByIdAndUpdate({_id: req.params._id}, {$push: {listTastes: listTastesAdd}})
-    const listTagsCustomer = listTastesCustomer.map((taste) => taste.tagName)
-    const listTagsAdd = req.body.listTastes.map((tagName) => tagName.tagName)
+    const listTagsCustomer = listTastesCustomer.map((taste) => taste['tagName'])
+    const listTagsAdd = req.body.listTastes.map((tagName) => tagName['tagName'])
     for (let i = 0; i < listTagsAdd.length; i++) {
       if (listTagsCustomer.includes(listTagsAdd[i])) {
         return res.status(409).send('Taste already exists.')
@@ -177,8 +183,8 @@ class CustomerRoutes {
       return
     }
     const listTastesCustomer = customer.listTastes
-    const listTagsCustomer = listTastesCustomer.map((taste) => taste.tagName)
-    const listTagsRm = req.body.listTastes.map((tagName) => tagName.tagName)
+    const listTagsCustomer = listTastesCustomer.map((taste) => taste['tagName'])
+    const listTagsRm = req.body.listTastes.map((tagName) => tagName['tagName'])
     for (let i = 0; i < listTagsRm.length; i++) {
       const index = listTagsCustomer.indexOf(listTagsRm[i])
       if (index === -1) {
