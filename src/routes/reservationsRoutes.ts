@@ -43,10 +43,10 @@ class ReservationsRoutes {
     }
 
     const {
-      _idCustomer, _idRestaurant, dateReservation, timeReservation
+      _idCustomer, _idRestaurant, numCustomers, phone, dateReservation, timeReservation
     } = req.body
     const newReservation = new Reservation({
-      _idCustomer, _idRestaurant, dateReservation, timeReservation
+      _idCustomer, _idRestaurant, numCustomers, phone, dateReservation, timeReservation
     })
 
     const customer = await Customer.findById(_idCustomer)
