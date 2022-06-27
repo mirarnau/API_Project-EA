@@ -63,10 +63,10 @@ class RestaurantsRoutes {
       return
     }
     const {
-      owner, restaurantName, email, address, city, description, photos, listTags, location, phone
+      owner, restaurantName, email, address, city, description, photos, listTags, location, phone, menuPdf
     } = req.body
     const newRestaurant = new Restaurant({
-      owner, restaurantName, email, address, city, description, photos, listTags, location, phone, rating: { rating: 0, votes: 0, total: 0 }, occupation: 0
+      owner, restaurantName, email, address, city, description, photos, listTags, location, phone, menuPdf
     })
     let newRestaurantID
 
@@ -170,7 +170,7 @@ class RestaurantsRoutes {
     this.router.get('/filters/rating', [authJwt.VerifyToken], this.sortByRating)
     this.router.post('/', [authJwt.VerifyToken], this.addRestaurant) // IT HAS TO VE VERIFY TOKEN OWNER !!!!!
     this.router.put('/:_id', [authJwt.VerifyToken], this.updateRestaurant)
-    this.router.delete('/:_id', [authJwt.VerifyToken], this.deleteRestaurant) // IT HAS TO BE VERIFY TOKEN OWNER !!!!!
+    this.router.delete('/:_id', this.deleteRestaurant) // IT HAS TO BE VERIFY TOKEN OWNER !!!!!
     this.router.get('/geo/nearsphere', [authJwt.VerifyToken], this.getRestaurantsFromDistance)
   }
 }

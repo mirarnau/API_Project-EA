@@ -19,6 +19,7 @@ const RestaurantSchema = new Schema({
   address: { type: String, required: true },
   city: { type: String, required: true },
   description: { type: String, required: true },
+  menuPdf: { type: String },
   photos: [{ type: String }], // List of URLs. The photos will be stored in the server.
   rating: [{
     rating: { type: Number },
