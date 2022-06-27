@@ -63,10 +63,10 @@ class RestaurantsRoutes {
       return
     }
     const {
-      owner, restaurantName, email, address, city, description, photos, listTags, location
+      owner, restaurantName, email, address, city, description, photos, listTags, location, phone
     } = req.body
     const newRestaurant = new Restaurant({
-      owner, restaurantName, email, address, city, description, photos, listTags, rating: 0, location
+      owner, restaurantName, email, address, city, description, photos, listTags, location, phone, rating: { rating: 0, votes: 0, total: 0 }, occupation: 0
     })
     let newRestaurantID
 
