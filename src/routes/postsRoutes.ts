@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import {
     Request, Response, Router
   } from 'express'
@@ -92,7 +93,7 @@ import Post from '../models/Post'
         let found = false
         let newListLikes = []
         for (let i = 0; i < post.likes.length; i++) {
-            if (post.likes[i].customerName === customerName) {
+            if (post.likes[i]['customerName'] === customerName) {
                 post.likes.splice(i, 1)
                 newListLikes = post.likes
                 found = true
