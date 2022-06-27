@@ -97,6 +97,15 @@ class CustomerRoutes {
     }
   }
 
+  public async updateCustomerRating (req: Request, res: Response) : Promise<void> {
+    const customerToUpdate = await Customer.findByIdAndUpdate(req.params._id, req.body)
+    if (customerToUpdate == null) {
+      res.status(404).send('Customer not found.')
+    } else {
+      res.status(201).send('Customer updated.')
+    }
+  }
+
   public async addDiscount (req: Request, res: Response) : Promise<any> {
     const customer = await Customer.findById(req.params._id)
     const restaurant = await Restaurant.find({ restaurantName: req.body.nameRestaurant })
@@ -215,6 +224,7 @@ class CustomerRoutes {
     this.router.post('/', this.addCustomer) // Anyone should be able to register to the app as a customer
     this.router.post('/login', this.login) // Anyone should be able to login to the app as a customer
     this.router.put('/:_id', [authJwt.VerifyTokenCustomer], this.updateCustomer)
+    this.router.put('/rating/:_id', [authJwt.VerifyTokenCustomer], this.updateCustomerRating)
     this.router.put('/tastes/add/:_id', [authJwt.VerifyTokenCustomer], this.addTaste)
     this.router.put('/tastes/remove/:_id', [authJwt.VerifyTokenCustomer], this.removeTaste)
     this.router.delete('/:_id', [authJwt.VerifyTokenCustomer], this.deleteCustomer)
