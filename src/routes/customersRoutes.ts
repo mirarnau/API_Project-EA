@@ -208,7 +208,7 @@ class CustomerRoutes {
   }
 
   routes () {
-    this.router.get('/', [authJwt.VerifyTokenAdmin], this.getAllCustomers)
+    this.router.get('/', [authJwt.VerifyToken], this.getAllCustomers)
     this.router.put('/discounts/add/:_id', [authJwt.VerifyTokenOwner], this.addDiscount)
     this.router.get('/:_id', [authJwt.VerifyTokenCustomer], this.getCustomerById)
     this.router.get('/name/:customerName', [authJwt.VerifyTokenCustomer], this.getCustomerByName)

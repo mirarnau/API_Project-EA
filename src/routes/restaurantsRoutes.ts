@@ -142,6 +142,7 @@ class RestaurantsRoutes {
 
   // It returns the near restarants ordered by proximity.
   public async getRestaurantsFromDistance (req: Request, res:Response) : Promise <void> {
+    console.log(req.body.maxDistance)
     const restaurantsFound = await Restaurant.find(
       {
         location: {
@@ -171,7 +172,7 @@ class RestaurantsRoutes {
     this.router.post('/', [authJwt.VerifyToken], this.addRestaurant) // IT HAS TO VE VERIFY TOKEN OWNER !!!!!
     this.router.put('/:_id', [authJwt.VerifyToken], this.updateRestaurant)
     this.router.delete('/:_id', this.deleteRestaurant) // IT HAS TO BE VERIFY TOKEN OWNER !!!!!
-    this.router.get('/geo/nearsphere', [authJwt.VerifyToken], this.getRestaurantsFromDistance)
+    this.router.post('/geo/nearsphere', [authJwt.VerifyToken], this.getRestaurantsFromDistance)
   }
 }
 const restaurantsRoutes = new RestaurantsRoutes()
