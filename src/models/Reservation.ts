@@ -3,6 +3,8 @@ import mongoose, { Schema, model } from 'mongoose'
 const ReservationSchema = new Schema({
   _idCustomer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
   _idRestaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
+  nameCustomer: { type: String, required: true },
+  nameRestaurant: { type: String, required: true },
   numCustomers: { type: Number, required: true },
   phone: { type: String, required: true },
   dateReservation: { type: String, required: true },
